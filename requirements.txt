@@ -1,0 +1,5 @@
+Flask==2.0.2
+python-dotenv==0.19.2
+SQLAlchemy<2.0.0
+Werkzeug==2.2.2
+flask-sqlalchemy==2.5.1
