@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Главная страница
+{% endblock title %}
+
+{% block content %}
+
+<div class="row row-cols-1 row-cols-md-3 mb-3 text-center">
+	{% for order in orders %}
+		<div class="col">
+			<div class="card mb-4 rounded-3 shadow-sm">
+				<div class="card-header py-3">
+					<h4 class="my-0 fw-normal">Бронирование №{{ order.id }}</h4>
+				</div>
+				<div class="card-body">
+					<h4 class="card-title pricing-card-title">{{ order.name }}</h4>
+					<ul class="list-unstyled mt-3 mb-4">
+						<li>Заезд: {{ order.checkin_date }}</li>
+						<li>Выезд: {{ order.checkout_date }}</li>
+						<li>Количество ночей: {{ order.days_count }}</li>
+						<li>Количество гостей: {{ order.guests_count }}</li>
+						{% if order.comment %}
+							<li>Коментарий: {{ order.comment }}</li>
+						{% endif %}
+					</ul>
+					<button type="button" class="w-100 btn btn-lg btn-outline-primary">Редактировать</button>
+				</div>
+			</div>
+		</div>
+	{% endfor %}
+</div>
+
+{% endblock content %}
