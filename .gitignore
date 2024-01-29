@@ -131,3 +131,7 @@ dmypy.json
 .vscode
 
 .idea
+
+# Static files
+
+static/
