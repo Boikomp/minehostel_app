@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Создание бронирования
+{% endblock title %}
+
+{% block content %}
+
+<main>
+  <section class="container my-5">
+    <div class="row">
+      <h4 class="mb-3">Создать новое бронирование</h4>
+      <div class="col-12 col-lg-7 my-5">
+        <form method="POST" novalidate>
+          {{ form.csrf_token }}
+          {{ form.name(class="form-control form-control-lg", placeholder=form.name.label.text) }}
+          <p>
+            {% if form.name.errors %}
+              {% for error in form.name.errors %}
+                <span style="color: red">{{ error }}</span>
+              {% endfor %}
+            {% endif %}
+          </p><br>
+          {{ form.guests_count(class="form-control form-control-lg", placeholder=form.guests_count.label.text) }}
+          <p>
+            {% if form.guests_count.errors %}
+              {% for error in form.guests_count.errors %}
+                <span style="color: red">{{ error }}</span>
+              {% endfor %}
+            {% endif %}
+          </p><br>
+          {{ form.checkin_date(class="form-control form-control-lg", placeholder=form.checkin_date.label.text) }}
+          <p>
+            {% if form.checkin_date.errors %}
+              {% for error in form.checkin_date.errors %}
+                <span style="color: red">{{ error }}</span>
+              {% endfor %}
+            {% endif %}
+          </p><br>
+          {{ form.checkout_date(class="form-control form-control-lg", placeholder=form.checkout_date.label.text) }}
+          <p>
+            {% if form.checkout_date.errors %}
+              {% for error in form.checkout_date.errors %}
+                <span style="color: red">{{ error }}</span>
+              {% endfor %}
+            {% endif %}
+          </p><br>
+          {{ form.price(class="form-control form-control-lg", placeholder=form.price.label.text) }}
+          <p>
+            {% if form.price.errors %}
+              {% for error in form.price.errors %}
+                <span style="color: red">{{ error }}</span>
+              {% endfor %}
+            {% endif %}
+          </p><br>
+          {{ form.comment(class="form-control form-control-lg", placeholder=form.comment.label.text, rows="3", cols="40") }}
+          <p></p><br>
+          {{ form.submit(class="px-5 py-3 btn btn-primary") }}
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+{% endblock content %}
