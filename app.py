@@ -1,9 +1,10 @@
 from datetime import datetime
 from enum import Enum
 
-from flask import Flask, redirect, render_template, url_for
+from flask import Flask, flash, redirect, render_template, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
+from sqlalchemy import and_
 from wtforms import (DateField, IntegerField, StringField, SubmitField,
                      TextAreaField)
 from wtforms.validators import DataRequired, Length
@@ -76,6 +77,17 @@ class OrderForm(FlaskForm):
     submit = SubmitField('Создать')
 
 
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template('404.html'), 404
+
+
+@app.errorhandler(500)
+def internal_error(error):
+    db.session.rollback()
+    return render_template('500.html'), 500
+
+
 @app.route('/')
 def index():
     orders = Order.query.all()
@@ -85,6 +97,18 @@ def index():
 @app.route('/order-create', methods=['GET', 'POST'])
 def order_create():
     form = OrderForm()
+    name = form.name.data
+    checkin_date = form.checkin_date.data
+    checkout_date = form.checkout_date.data
+
+    if Order.query.filter(and_(
+        Order.name == name,
+        Order.checkin_date == checkin_date,
+        Order.checkout_date == checkout_date,
+    )).first() is not None:
+        flash('Заказ на эти даты для этого клиента уже существует.')
+        return render_template('order_create.html', form=form)
+
     if form.validate_on_submit():
         order = Order(
             name=form.name.data,
@@ -94,6 +118,7 @@ def order_create():
             price=form.price.data,
             comment=form.comment.data,
         )
+
         db.session.add(order)
         db.session.commit()
         return redirect(url_for('index'))

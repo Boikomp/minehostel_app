@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Ошибка 404{% endblock title %}
+
+{% block content %}
+
+<main>
+    <section class="container my-5">
+      <div class="row">
+        <h4 class="mb-3">Ты не пройдёшь!</h4>
+        <p>Если тут что-то было, теперь этого тут нет.</p>
+        <p>
+          <a href="{{ url_for('index') }}">Вернуться на главную</a>
+        </p>        
+      </div>
+    </section>
+  </main>
+
+{% endblock content %}

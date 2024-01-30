@@ -10,6 +10,15 @@
   <section class="container my-5">
     <div class="row">
       <h4 class="mb-3">Создать новое бронирование</h4>
+      <p class="py-3 mb-3" style="color: red">
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              {{ message }}
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+      </p>
       <div class="col-12 col-lg-7 my-5">
         <form method="POST" novalidate>
           {{ form.csrf_token }}
@@ -55,7 +64,7 @@
           </p><br>
           {{ form.comment(class="form-control form-control-lg", placeholder=form.comment.label.text, rows="3", cols="40") }}
           <p></p><br>
-          {{ form.submit(class="px-5 py-3 btn btn-primary") }}
+          {{ form.submit(class="px-5 py-3 btn btn-lg btn-outline-primary") }}
         </form>
       </div>
     </div>
