@@ -6,6 +6,16 @@
 
 {% block content %}
 
+<h1 class="mb-3">Предстоящие бронирования</h1>
+	<p class="py-3 mb-3" style="color: green">
+		{% with messages = get_flashed_messages(category_filter=["order-success"]) %}
+			{% if messages %}
+				{% for message in messages %}
+					{{ message }}
+				{% endfor %}
+			{% endif %}
+		{% endwith %}
+	</p>
 <div class="row row-cols-1 row-cols-md-3 mb-3 text-center">
 	{% for order in orders %}
 		<div class="col">

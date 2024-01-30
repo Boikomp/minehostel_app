@@ -2,9 +2,10 @@ from datetime import datetime
 from enum import Enum
 
 from flask import Flask, flash, redirect, render_template, url_for
+from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
-from sqlalchemy import and_
+from sqlalchemy.exc import IntegrityError
 from wtforms import (DateField, IntegerField, StringField, SubmitField,
                      TextAreaField)
 from wtforms.validators import DataRequired, Length
@@ -14,6 +15,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite3'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'sefj;4is4b4;j4;4h;oishtho4;otih4;thi'
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 
 class StatusEnum(Enum):
@@ -24,6 +26,10 @@ class StatusEnum(Enum):
 
 class Order(db.Model):
     __tablename__ = 'orders'
+    __table_args__ = (
+        db.UniqueConstraint('name', 'checkin_date', 'checkout_date',
+                            name='unique_order_constraint'),
+    )
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     guests_count = db.Column(db.Integer, nullable=False)
@@ -97,17 +103,6 @@ def index():
 @app.route('/order-create', methods=['GET', 'POST'])
 def order_create():
     form = OrderForm()
-    name = form.name.data
-    checkin_date = form.checkin_date.data
-    checkout_date = form.checkout_date.data
-
-    if Order.query.filter(and_(
-        Order.name == name,
-        Order.checkin_date == checkin_date,
-        Order.checkout_date == checkout_date,
-    )).first() is not None:
-        flash('Заказ на эти даты для этого клиента уже существует.')
-        return render_template('order_create.html', form=form)
 
     if form.validate_on_submit():
         order = Order(
@@ -118,10 +113,15 @@ def order_create():
             price=form.price.data,
             comment=form.comment.data,
         )
-
-        db.session.add(order)
-        db.session.commit()
-        return redirect(url_for('index'))
+        try:
+            db.session.add(order)
+            db.session.commit()
+            flash('Заказ успешно создан!', 'order-success')
+            return redirect(url_for('index'))
+        except IntegrityError:
+            db.session.rollback()
+            flash('Заказ с таким именем и датами уже существует.',
+                  'order-error')
 
     return render_template('order_create.html', form=form)
 
