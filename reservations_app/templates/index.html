@@ -1,14 +1,12 @@
 {% extends 'base.html' %}
 
-{% block title %}
-Главная страница
-{% endblock title %}
+{% block title %}Главная страница{% endblock title %}
 
 {% block content %}
 
-<h1 class="mb-3">Предстоящие бронирования</h1>
+  <h1 class="mb-3">{% block main_text %}Предстоящие бронирования{% endblock main_text %}</h1>
 	<p class="py-3 mb-3" style="color: green">
-		{% with messages = get_flashed_messages(category_filter=["order-success"]) %}
+		{% with messages = get_flashed_messages(category_filter=["order-success", "service-success"]) %}
 			{% if messages %}
 				{% for message in messages %}
 					{{ message }}
@@ -34,7 +32,7 @@
 							<li>Коментарий: {{ order.comment }}</li>
 						{% endif %}
 					</ul>
-					<button type="button" class="w-100 btn btn-lg btn-outline-primary">Редактировать</button>
+					<a href="{{ url_for('order_update', id=order.id) }}" class="w-100 btn btn-lg btn-outline-primary">Редактировать</a>
 				</div>
 			</div>
 		</div>

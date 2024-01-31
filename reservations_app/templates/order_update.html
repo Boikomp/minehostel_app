@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Редактирование бронирования
+{% endblock title %}
+
+{% block content %}
+
+<main>
+  <section class="container my-5">
+    <div class="row">
+      <h1 class="mb-3">Редактирование бронирования</h1>
+      <p class="py-3 mb-3" style="color: red">
+        {% with messages = get_flashed_messages(category_filter=["order-error"]) %}
+          {% if messages %}
+            {% for message in messages %}
+              {{ message }}
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+      </p>
+      <div class="col-12 col-lg-7 my-5">
+        <form method="POST" novalidate>
+          {{ form.csrf_token }}
+          {{ form.name(class="form-control form-control-lg", placeholder=form.name.label.text) }}
+          <p>
+            {% if form.name.errors %}
+              {% for error in form.name.errors %}
+                <span style="color: red">{{ error }}</span>
+              {% endfor %}
+            {% endif %}
+          </p><br>
+          {{ form.guests_count(class="form-control form-control-lg", placeholder=form.guests_count.label.text) }}
+          <p>
+            {% if form.guests_count.errors %}
+              {% for error in form.guests_count.errors %}
+                <span style="color: red">{{ error }}</span>
+              {% endfor %}
+            {% endif %}
+          </p><br>
+          {{ form.checkin_date(class="form-control form-control-lg", placeholder=form.checkin_date.label.text) }}
+          <p>
+            {% if form.checkin_date.errors %}
+              {% for error in form.checkin_date.errors %}
+                <span style="color: red">{{ error }}</span>
+              {% endfor %}
+            {% endif %}
+          </p><br>
+          {{ form.checkout_date(class="form-control form-control-lg", placeholder=form.checkout_date.label.text) }}
+          <p>
+            {% if form.checkout_date.errors %}
+              {% for error in form.checkout_date.errors %}
+                <span style="color: red">{{ error }}</span>
+              {% endfor %}
+            {% endif %}
+          </p><br>
+          {{ form.price(class="form-control form-control-lg", placeholder=form.price.label.text) }}
+          <p>
+            {% if form.price.errors %}
+              {% for error in form.price.errors %}
+                <span style="color: red">{{ error }}</span>
+              {% endfor %}
+            {% endif %}
+          </p><br>
+          {{ form.status(class="form-control form-control-lg", placeholder=form.status.label.text) }}
+          <p>
+            {% if form.status.errors %}
+              {% for error in form.status.errors %}
+                <span style="color: red">{{ error }}</span>
+              {% endfor %}
+            {% endif %}
+          </p><br>
+          {{ form.comment(class="form-control form-control-lg", placeholder=form.comment.label.text, rows="3", cols="40") }}
+          <p></p><br>
+          {{ form.submit(class="px-5 py-3 btn btn-lg btn-outline-primary") }}
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+{% endblock content %}

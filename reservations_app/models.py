@@ -5,9 +5,9 @@ from . import db
 
 
 class StatusEnum(Enum):
-    CREATED = 'created'
-    CANCELED = 'canceled'
-    COMPLETED = 'completed'
+    CREATED = 'Создан'
+    CANCELED = 'Отменен'
+    COMPLETED = 'Завершен'
 
 
 class Order(db.Model):
@@ -39,3 +39,14 @@ class Order(db.Model):
         return (f'Бронирование {self.id}: {self.name}, '
                 f'{self.checkin_date}, ночей - {self.days_count}, '
                 f'статус - {self.status}')
+
+
+class Service(db.Model):
+    __tablename__ = 'services'
+
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), unique=True, nullable=False)
+    price = db.Column(db.Integer, nullable=False)
+
+    def __repr__(self):
+        return (f'Услуга {self.title} - {self.price} сом')

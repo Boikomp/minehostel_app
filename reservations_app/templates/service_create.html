@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Создание услуги
+{% endblock title %}
+
+{% block content %}
+
+<main>
+  <section class="container my-5">
+    <div class="row">
+      <h1 class="mb-3">Создать новую доп услугу</h1>
+      <p class="py-3 mb-3" style="color: red">
+        {% with messages = get_flashed_messages(category_filter=["service-error"]) %}
+          {% if messages %}
+            {% for message in messages %}
+              {{ message }}
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+      </p>
+      <div class="col-12 col-lg-7 my-5">
+        <form method="POST" novalidate>
+          {{ form.csrf_token }}
+          {{ form.title(class="form-control form-control-lg", placeholder=form.title.label.text) }}
+          <p>
+            {% if form.title.errors %}
+              {% for error in form.title.errors %}
+                <span style="color: red">{{ error }}</span>
+              {% endfor %}
+            {% endif %}
+          </p><br>
+          {{ form.price(class="form-control form-control-lg", placeholder=form.price.label.text) }}
+          <p>
+            {% if form.price.errors %}
+              {% for error in form.price.errors %}
+                <span style="color: red">{{ error }}</span>
+              {% endfor %}
+            {% endif %}
+          </p><br>
+          {{ form.submit(class="px-5 py-3 btn btn-lg btn-outline-primary") }}
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+{% endblock content %}
