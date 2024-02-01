@@ -6,7 +6,7 @@
 
   <h1 class="mb-3">{% block main_text %}Предстоящие бронирования{% endblock main_text %}</h1>
 	<p class="py-3 mb-3" style="color: green">
-		{% with messages = get_flashed_messages(category_filter=["order-success", "service-success"]) %}
+		{% with messages = get_flashed_messages(category_filter=["order-success"]) %}
 			{% if messages %}
 				{% for message in messages %}
 					{{ message }}

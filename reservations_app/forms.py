@@ -22,6 +22,10 @@ class ServiceForm(FlaskForm):
     submit = SubmitField('Добавить')
 
 
+class ServiceUpdateForm(ServiceForm):
+    submit = SubmitField('Сохранить изменения')
+
+
 class OrderForm(FlaskForm):
     name = StringField(
         'Имя гостя',

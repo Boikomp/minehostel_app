@@ -9,7 +9,7 @@
 <main>
   <section class="container my-5">
     <div class="row">
-      <h1 class="mb-3">Редактирование бронирования</h1>
+      <h1 class="mb-3">Редактировать бронирование №{{ order_id }}</h1>
       <p class="py-3 mb-3" style="color: red">
         {% with messages = get_flashed_messages(category_filter=["order-error"]) %}
           {% if messages %}

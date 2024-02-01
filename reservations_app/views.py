@@ -2,7 +2,7 @@ from flask import flash, redirect, render_template, url_for
 from sqlalchemy.exc import IntegrityError
 
 from . import app, db
-from .forms import OrderForm, OrderUpdateForm, ServiceForm
+from .forms import OrderForm, OrderUpdateForm, ServiceForm, ServiceUpdateForm
 from .models import Order, Service, StatusEnum
 
 
@@ -62,12 +62,13 @@ def order_update(id):
             db.session.rollback()
             flash(f'Ошибка обновления: {str(e)}', 'order-error')
 
-    return render_template('order_update.html', form=form)
+    return render_template('order_update.html', form=form, order_id=id)
 
 
 @app.route('/service-create', methods=['GET', 'POST'])
 def service_create():
     form = ServiceForm()
+
     if form.validate_on_submit():
         service = Service(
             title=form.title.data,
@@ -82,4 +83,29 @@ def service_create():
             db.session.rollback()
             flash('Услуга с таким названием уже существует.',
                   'service-error')
+
     return render_template('service_create.html', form=form)
+
+
+@app.route('/services-all')
+def services_all():
+    services = Service.query.all()
+    return render_template('services_all.html', services=services)
+
+
+@app.route('/service/<int:id>', methods=['GET', 'POST'])
+def service_update(id):
+    service = Service.query.get_or_404(id)
+    form = ServiceUpdateForm(obj=service)
+
+    if form.validate_on_submit():
+        try:
+            form.populate_obj(service)
+            db.session.commit()
+            flash('Услуга успешно обновлена!', 'service-success')
+            return redirect(url_for('services_all'))
+        except IntegrityError:
+            db.session.rollback()
+            flash('Услуга с таким названием уже существует.', 'service-error')
+
+    return render_template('service_update.html', form=form, service_id=id)
