@@ -16,6 +16,7 @@ class Order(db.Model):
         db.UniqueConstraint('name', 'checkin_date', 'checkout_date',
                             name='unique_order_constraint'),
     )
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     guests_count = db.Column(db.Integer, nullable=False)
@@ -30,6 +31,9 @@ class Order(db.Model):
     updated_at = db.Column(db.DateTime,
                            default=datetime.utcnow,
                            onupdate=datetime.utcnow)
+
+    services = db.relationship('OrderService', backref='order',
+                               cascade='all, delete-orphan')
 
     @property
     def days_count(self):
@@ -48,5 +52,33 @@ class Service(db.Model):
     title = db.Column(db.String(100), unique=True, nullable=False)
     price = db.Column(db.Integer, nullable=False)
 
+    orders = db.relationship('OrderService', backref='service',
+                             cascade='all, delete-orphan')
+
     def __repr__(self):
         return (f'Услуга {self.title} - {self.price} сом')
+
+
+class OrderService(db.Model):
+    __tablename__ = 'order_services'
+
+    id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.Integer,
+                         db.ForeignKey('orders.id'),
+                         nullable=False)
+    service_id = db.Column(db.Integer,
+                           db.ForeignKey('services.id'),
+                           nullable=False)
+    quantity = db.Column(db.Integer, nullable=False, default=1)
+
+    order = db.relationship('Order', backref='order_services',
+                            cascade='all, delete-orphan')
+
+    order = db.relationship('Order', backref='order_services',
+                            cascade='all, delete-orphan')
+    service = db.relationship('Service', backref='order_services',
+                              cascade='all, delete-orphan')
+
+    def __repr__(self):
+        return (f'Услуга {self.service_id} в заказе {self.order_id}, '
+                f'количество - {self.quantity}')
