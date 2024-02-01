@@ -32,8 +32,8 @@ class Order(db.Model):
                            default=datetime.utcnow,
                            onupdate=datetime.utcnow)
 
-    services = db.relationship('OrderService', backref='order',
-                               cascade='all, delete-orphan')
+    services = db.relationship('OrderService', back_populates='order',
+                               cascade='all, delete-orphan', lazy='dynamic')
 
     @property
     def days_count(self):
@@ -52,8 +52,8 @@ class Service(db.Model):
     title = db.Column(db.String(100), unique=True, nullable=False)
     price = db.Column(db.Integer, nullable=False)
 
-    orders = db.relationship('OrderService', backref='service',
-                             cascade='all, delete-orphan')
+    orders = db.relationship('OrderService', back_populates='service',
+                             cascade='all, delete-orphan', lazy='dynamic')
 
     def __repr__(self):
         return (f'Услуга {self.title} - {self.price} сом')
@@ -71,13 +71,10 @@ class OrderService(db.Model):
                            nullable=False)
     quantity = db.Column(db.Integer, nullable=False, default=1)
 
-    order = db.relationship('Order', backref='order_services',
-                            cascade='all, delete-orphan')
-
-    order = db.relationship('Order', backref='order_services',
-                            cascade='all, delete-orphan')
-    service = db.relationship('Service', backref='order_services',
-                              cascade='all, delete-orphan')
+    order = db.relationship('Order', back_populates='services',
+                            cascade='all, delete-orphan', single_parent=True)
+    service = db.relationship('Service', back_populates='orders',
+                              cascade='all, delete-orphan', single_parent=True)
 
     def __repr__(self):
         return (f'Услуга {self.service_id} в заказе {self.order_id}, '
