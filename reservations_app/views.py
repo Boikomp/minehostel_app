@@ -21,6 +21,12 @@ def orders_all():
     return render_template('orders_all.html', orders=orders)
 
 
+@app.route('/order/<int:id>')
+def order_detail(id):
+    order = Order.query.get_or_404(id)
+    return render_template('order_detail.html', order=order)
+
+
 @app.route('/order-create', methods=['GET', 'POST'])
 def order_create():
     form = OrderForm()
@@ -38,7 +44,7 @@ def order_create():
             db.session.add(order)
             db.session.commit()
             flash('Заказ успешно создан!', 'order-success')
-            return redirect(url_for('index'))
+            return redirect(url_for('order_detail', id=order.id))
         except IntegrityError:
             db.session.rollback()
             flash('Заказ с таким именем и датами уже существует.',
@@ -47,7 +53,7 @@ def order_create():
     return render_template('order_create.html', form=form)
 
 
-@app.route('/order-update/<int:id>', methods=['GET', 'POST'])
+@app.route('/order/<int:id>/update', methods=['GET', 'POST'])
 def order_update(id):
     order = Order.query.get_or_404(id)
     form = OrderUpdateForm(obj=order)
@@ -57,7 +63,7 @@ def order_update(id):
             form.populate_obj(order)
             db.session.commit()
             flash('Заказ успешно обновлен!', 'order-success')
-            return redirect(url_for('index'))
+            return redirect(url_for('order_detail', id=order.id))
         except Exception as e:
             db.session.rollback()
             flash(f'Ошибка обновления: {str(e)}', 'order-error')
