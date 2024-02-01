@@ -4,16 +4,12 @@
 
 {% block content %}
 
-<main>
-    <section class="container my-5">
-      <div class="row">
-        <h1 class="mb-3">Ты не пройдёшь!</h1>
-        <p>Если тут что-то было, теперь этого тут нет.</p>
-        <p>
-          <a href="{{ url_for('index') }}">Вернуться на главную</a>
-        </p>        
-      </div>
-    </section>
-  </main>
+<div class="row">
+  <h1 class="mb-3">Ты не пройдёшь!</h1>
+  <p>Если тут что-то было, теперь этого тут нет.</p>
+  <p>
+    <a href="{{ url_for('index') }}">Вернуться на главную</a>
+  </p>        
+</div>
 
 {% endblock content %}

@@ -4,39 +4,48 @@
 
 {% block content %}
 
-  <h1 class="mb-3">{% block main_text %}Предстоящие бронирования{% endblock main_text %}</h1>
-	<p class="py-3 mb-3" style="color: green">
-		{% with messages = get_flashed_messages(category_filter=["order-success"]) %}
-			{% if messages %}
-				{% for message in messages %}
-					{{ message }}
-				{% endfor %}
-			{% endif %}
-		{% endwith %}
-	</p>
-<div class="row row-cols-1 row-cols-md-3 mb-3 text-center">
-	{% for order in orders %}
-		<div class="col">
-			<div class="card mb-4 rounded-3 shadow-sm">
-				<div class="card-header py-3">
-					<h4 class="my-0 fw-normal">Бронирование №{{ order.id }}</h4>
-				</div>
-				<div class="card-body">
-					<h4 class="card-title pricing-card-title">{{ order.name }}</h4>
-					<ul class="list-unstyled mt-3 mb-4">
-						<li>Заезд: {{ order.checkin_date }}</li>
-						<li>Выезд: {{ order.checkout_date }}</li>
-						<li>Количество ночей: {{ order.days_count }}</li>
-						<li>Количество гостей: {{ order.guests_count }}</li>
-						{% if order.comment %}
-							<li>Коментарий: {{ order.comment }}</li>
-						{% endif %}
-					</ul>
-					<a href="{{ url_for('order_update', id=order.id) }}" class="w-100 btn btn-lg btn-outline-primary">Редактировать</a>
-				</div>
-			</div>
-		</div>
-	{% endfor %}
-</div>
+<h1 class="mb-3">
+  {% block main_text %}Предстоящие бронирования{% endblock main_text %}
+</h1>
+{% with messages = get_flashed_messages(category_filter=["order-success"]) %}
+  {% if messages %}
+    {% for message in messages %}
+      <p style="color: green">
+        {{ message }}
+      </p>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<table class="table table-striped table-sm">
+  <thead>
+    <tr>
+      <th scope="col">id</th>
+      <th scope="col">Имя гостя</th>
+      <th scope="col">Дата заезда</th>
+      <th scope="col">Дата выезда</th>
+      <th scope="col">Гостей</th>
+      <th scope="col">Ночей</th>
+      <th scope="col">Коментарий</th>
+      <th scope="col">Статус</th>
+      <th scope="col">#</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for order in orders %}
+    <tr>
+      <td>{{ order.id }}</td>
+      <td>{{ order.name }}</td>
+      <td>{{ order.checkin_date }}</td>
+      <td>{{ order.checkout_date }}</td>
+      <td>{{ order.days_count }}</td>
+      <td>{{ order.guests_count }}</td>
+      <td>{{ order.comment }}</td>
+      <td>{{ order.status.value }}</td>
+      <td><a href="{{ url_for('order_update', id=order.id) }}">Редактировать</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
 
 {% endblock content %}
