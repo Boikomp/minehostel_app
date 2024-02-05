@@ -1,9 +1,10 @@
-from flask import flash, redirect, render_template, url_for
+from flask import flash, redirect, render_template, request, url_for
 from sqlalchemy.exc import IntegrityError
 
 from . import app, db
-from .forms import OrderForm, OrderUpdateForm, ServiceForm, ServiceUpdateForm
-from .models import Order, Service, StatusEnum
+from .forms import (OrderForm, OrderServiceForm, OrderUpdateForm, ServiceForm,
+                    ServiceUpdateForm)
+from .models import Order, OrderService, Service, StatusEnum
 
 
 @app.route('/')
@@ -21,10 +22,34 @@ def orders_all():
     return render_template('orders_all.html', orders=orders)
 
 
-@app.route('/order/<int:id>')
+@app.route('/order/<int:id>', methods=['GET', 'POST'])
 def order_detail(id):
     order = Order.query.get_or_404(id)
-    return render_template('order_detail.html', order=order)
+    form = OrderServiceForm()
+    services = Service.query.all()
+    form.service.choices = [
+        (str(service.id), f'{service.title} - {service.price} сом')
+        for service in services
+    ]
+
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            try:
+                order_service = OrderService(
+                    order_id=id,
+                    service_id=int(form.service.data),
+                    quantity=form.quantity.data,
+                )
+                db.session.add(order_service)
+                db.session.commit()
+                flash('Дополнительная услуга успешно добавлена',
+                      'order-success')
+                return redirect(url_for('order_detail', id=id))
+            except Exception as e:
+                db.session.rollback()
+                flash(f'Ошибка обновления: {str(e)}', 'order-error')
+
+    return render_template('order_detail.html', order=order, form=form)
 
 
 @app.route('/order-create', methods=['GET', 'POST'])
@@ -84,7 +109,7 @@ def service_create():
             db.session.add(service)
             db.session.commit()
             flash('Услуга успешно создана!', 'service-success')
-            return redirect(url_for('index'))
+            return redirect(url_for('services_all'))
         except IntegrityError:
             db.session.rollback()
             flash('Услуга с таким названием уже существует.',

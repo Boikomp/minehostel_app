@@ -60,3 +60,13 @@ class OrderUpdateForm(OrderForm):
         validators=[DataRequired(message='Обязательное поле')]
     )
     submit = SubmitField('Сохранить изменения')
+
+
+class OrderServiceForm(FlaskForm):
+    service = SelectField('Дополнительная услуга', validators=[DataRequired()])
+    quantity = IntegerField(
+        'Количество',
+        validators=[DataRequired(message='Обязательное поле'),
+                    NumberRange(min=0)]
+    )
+    submit = SubmitField('Добавить в заказ')

@@ -4,30 +4,72 @@
 
 {% block content %}
 
-<h1 class="mb-3">
-  {% block main_text %}Бронирование №{{ order.id }}{% endblock main_text %}
-</h1>
+<div class="row">
+  <div class="col-md-6">
+    <h1 class="mb-3">
+      {% block main_text %}Бронирование №{{ order.id }}{% endblock main_text %}
+    </h1>
 
-{% with messages = get_flashed_messages(category_filter=["order-success"]) %}
-  {% if messages %}
-    {% for message in messages %}
-      <p style="color: green">
-        {{ message }}
+    {% with messages = get_flashed_messages(category_filter=["order-success"]) %}
+      {% if messages %}
+        {% for message in messages %}
+          <p style="color: green">
+            {{ message }}
+          </p>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    {% with messages = get_flashed_messages(category_filter=["order-error"]) %}
+      {% if messages %}
+        {% for message in messages %}
+          <p style="color: red">
+            {{ message }}
+          </p>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    <ul class="list-unstyled">
+      <li class="text-start">Имя гостя: {{ order.name }}</li>
+      <li>Дата заезда: {{ order.checkin_date }}</li>
+      <li>Дата выезда: {{ order.checkout_date }}</li>
+      <li>Количество гостей: {{ order.guests_count }}</li>
+      <li>Количество ночей: {{ order.days_count }}</li>
+      {% if order.comment %}
+        <li>Комментарий: {{ order.comment }}</li>
+      {% endif %}
+      <li>Статус: {{ order.status.value }}</li>
+    </ul>
+    <a href="{{ url_for('order_update', id=order.id) }}" class="btn btn-lg btn-primary">Редактировать</a>
+  </div>
+
+  <div class="col-md-6">
+    <h4>Допуслуги в бронировании №{{ order.id }}:</h4>
+    {% if order.service %}
+      <ul class="list-unstyled">
+        {% for service in order.services %}
+          <li>"{{ service.service.title }}" {{ service.service.price }} сом - {{ service.quantity }} шт.</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>Пока добавленных услуг нет</p>
+    {% endif %}
+    <h4>Добавить услугу:</h4>
+    <form method="post" novalidate>
+      {{ form.csrf_token }}
+
+      {{ form.service(class="form-control form-control-lg", placeholder=form.service.label.text) }}
+      <br>
+      {{ form.quantity(class="form-control form-control-lg", placeholder=form.quantity.label.text) }}
+      <p>
+        {% if form.quantity.errors %}
+          {% for error in form.quantity.errors %}
+            <span style="color: red">{{ error }}</span>
+          {% endfor %}
+        {% endif %}
       </p>
-    {% endfor %}
-  {% endif %}
-{% endwith %}
-<ul class="list-unstyled">
-	<li class="text-start">Имя гостя: {{ order.name }}</li>
-	<li>Дата заезда: {{ order.checkin_date }}</li>
-	<li>Дата выезда: {{ order.checkout_date }}</li>
-	<li>Количество гостей: {{ order.guests_count }}</li>
-	<li>Количество ночей: {{ order.days_count }}</li>
-	{% if order.comment %}
-		<li>Комментарий: {{ order.comment }}</li>
-	{% endif %}
-	<li>Статус: {{ order.status.value }}</li>
-</ul>
-<a href="{{ url_for('order_update', id=order.id) }}" class="px-5 py-3 btn btn-lg btn-outline-primary">Редактировать</a>
+      {{ form.submit(class="btn btn-lg btn-primary") }}
+    </form>
+  </div>
+</div>
 
 {% endblock content %}
