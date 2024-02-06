@@ -98,7 +98,7 @@ def order_create():
     return render_template('order_create.html', form=form)
 
 
-@app.route('/order/<int:id>/update', methods=['GET', 'POST'])
+@app.route('/order-update/<int:id>/', methods=['GET', 'POST'])
 def order_update(id):
     order = Order.query.get_or_404(id)
     form = OrderUpdateForm(obj=order)
@@ -144,7 +144,7 @@ def services_all():
     return render_template('services_all.html', services=services)
 
 
-@app.route('/service/<int:id>', methods=['GET', 'POST'])
+@app.route('/service-update/<int:id>', methods=['GET', 'POST'])
 def service_update(id):
     service = Service.query.get_or_404(id)
     form = ServiceUpdateForm(obj=service)
@@ -160,3 +160,18 @@ def service_update(id):
             flash('Услуга с таким названием уже существует.', 'service-error')
 
     return render_template('service_update.html', form=form, service_id=id)
+
+
+@app.route('/service-delete/<int:id>')
+def service_delete(id):
+    service = Service.query.get_or_404(id)
+
+    try:
+        db.session.delete(service)
+        db.session.commit()
+        flash('Услуга успешно удалена!', 'service-success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Ошибка удаления: {str(e)}', 'order-error')
+
+    return redirect(url_for('services_all'))

@@ -7,7 +7,7 @@
 <h1 class="mb-3">
 	{% block main_text %}Список всех услуг{% endblock main_text %}
 </h1>
-{% with messages = get_flashed_messages(category_filter=["service-success"]) %}
+{% with messages = get_flashed_messages(category_filter=["service-success, service-error"]) %}
 	{% if messages %}
 	  {% for message in messages %}
 		  <p style="color: green">
@@ -17,25 +17,32 @@
 	{% endif %}
 {% endwith %}
 
-<table class="table table-striped table-sm">
-  <thead>
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">Название</th>
-      <th scope="col">Стоимость</th>
-      <th scope="col"></th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for service in services %}
-    <tr>
-      <td>{{ service.id }}</td>
-      <td>{{ service.title }}</td>
-      <td>{{ service.price }}</td>
-      <td><a href="{{ url_for('service_update', id=service.id) }}" class="text-dark">Редактировать</a></td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+{% if services %}
+  <table class="table table-striped table-sm">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Название</th>
+        <th scope="col">Стоимость</th>
+        <th scope="col"></th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for service in services %}
+      <tr>
+        <td>{{ service.id }}</td>
+        <td>{{ service.title }}</td>
+        <td>{{ service.price }}</td>
+        <td><a href="{{ url_for('service_update', id=service.id) }}" class="text-dark">Редактировать</a></td>
+        <td><a href="{{ url_for('service_delete', id=service.id) }}" class="text-dark">Удалить</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p>Пока нет ни одной допуслуги</p>
+{% endif %}
 <a href="{{ url_for('service_create') }}" class="btn btn-lg btn-primary">Добавить услугу</a>
+
 {% endblock content %}
