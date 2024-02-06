@@ -1,10 +1,10 @@
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 
 from . import db
 
 
-class StatusEnum(Enum):
+class StatusEnum(StrEnum):
     CREATED = 'Создан'
     CANCELED = 'Отменен'
     COMPLETED = 'Завершен'
@@ -33,7 +33,7 @@ class Order(db.Model):
                            onupdate=datetime.utcnow)
 
     services = db.relationship('OrderService', back_populates='order',
-                               cascade='all, delete-orphan', lazy='dynamic')
+                               cascade='all, delete-orphan')
 
     @property
     def days_count(self):
@@ -69,12 +69,12 @@ class OrderService(db.Model):
     service_id = db.Column(db.Integer,
                            db.ForeignKey('services.id'),
                            nullable=False)
-    quantity = db.Column(db.Integer, nullable=False, default=1)
+    quantity = db.Column(db.Integer, nullable=False)
 
     order = db.relationship('Order', back_populates='services',
-                            cascade='all, delete-orphan', single_parent=True)
+                            single_parent=True)
     service = db.relationship('Service', back_populates='orders',
-                              cascade='all, delete-orphan', single_parent=True)
+                              single_parent=True)
 
     def __repr__(self):
         return (f'Услуга {self.service_id} в заказе {self.order_id}, '

@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import (DateField, IntegerField, SelectField, StringField,
                      SubmitField, TextAreaField)
-from wtforms.validators import DataRequired, Length, NumberRange
+from wtforms.validators import DataRequired, InputRequired, Length, NumberRange
 
 from .models import StatusEnum
 
@@ -66,7 +66,12 @@ class OrderServiceForm(FlaskForm):
     service = SelectField('Дополнительная услуга', validators=[DataRequired()])
     quantity = IntegerField(
         'Количество',
-        validators=[DataRequired(message='Обязательное поле'),
-                    NumberRange(min=0)]
+        validators=[
+            InputRequired('Обязательное поле'),
+            NumberRange(
+                min=0,
+                message='Введите неотрицательное число'
+            )
+        ]
     )
-    submit = SubmitField('Добавить в заказ')
+    submit = SubmitField('Сохранить')

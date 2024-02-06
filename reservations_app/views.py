@@ -35,15 +35,35 @@ def order_detail(id):
     if request.method == 'POST':
         if form.validate_on_submit():
             try:
-                order_service = OrderService(
+                service_id = int(form.service.data)
+                quantity = form.quantity.data
+
+                order_service = OrderService.query.filter_by(
                     order_id=id,
-                    service_id=int(form.service.data),
-                    quantity=form.quantity.data,
-                )
-                db.session.add(order_service)
+                    service_id=service_id
+                ).first()
+
+                if order_service:
+                    if quantity == 0:
+                        db.session.delete(order_service)
+                        flash('Дополнительная услуга успешно удалена',
+                              'order-success')
+                    else:
+                        order_service.quantity = quantity
+                        flash('Дополнительная услуга успешно обновлена',
+                              'order-success')
+                else:
+                    order_service = OrderService(
+                        order_id=id,
+                        service_id=service_id,
+                        quantity=quantity,
+                    )
+                    db.session.add(order_service)
+                    flash('Дополнительная услуга успешно добавлена',
+                          'order-success')
+
                 db.session.commit()
-                flash('Дополнительная услуга успешно добавлена',
-                      'order-success')
+
                 return redirect(url_for('order_detail', id=id))
             except Exception as e:
                 db.session.rollback()
