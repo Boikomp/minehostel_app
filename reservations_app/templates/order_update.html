@@ -35,6 +35,14 @@
         {% endfor %}
       {% endif %}
     </p>
+    {{ form.guides_count(class="form-control form-control-lg", placeholder=form.guides_count.label.text) }}
+    <p>
+      {% if form.guides_count.errors %}
+        {% for error in form.guides_count.errors %}
+          <span style="color: red">{{ error }}</span>
+        {% endfor %}
+      {% endif %}
+    </p>
     {{ form.checkin_date(class="form-control form-control-lg", placeholder=form.checkin_date.label.text) }}
     <p>
       {% if form.checkin_date.errors %}

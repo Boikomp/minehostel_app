@@ -33,10 +33,15 @@
       <li>Дата заезда: {{ order.checkin_date }}</li>
       <li>Дата выезда: {{ order.checkout_date }}</li>
       <li>Количество гостей: {{ order.guests_count }}</li>
+      <li>
+        {% if order.guides_count %}
+          Количество гидов: {{ order.guides_count }}
+        {% endif %}
+      </li>
       <li>Количество ночей: {{ order.days_count }}</li>
       <li>Стоимость одного места: {{ order.price }}</li>
       {% if order.comment %}
-        <li>Комментарий: {{ order.comment }}</li>
+        <li class="text-break">Комментарий: {{ order.comment }}</li>
       {% endif %}
       <li>Статус: {{ order.status }}</li>
       <li>Полная стоимость: {{ order.total_price }}</li>

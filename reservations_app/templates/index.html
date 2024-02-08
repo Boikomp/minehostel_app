@@ -32,7 +32,7 @@
         <td>{{ order.checkout_date }}</td>
         <td>{{ order.days_count }}</td>
         <td>{{ order.guests_count }}</td>
-        <td>{{ order.comment }}</td>
+        <td>{{ order.comment[:40] }}...</td>
         <td>{{ order.status.value }}</td>
         <td><a href="{{ url_for('order_detail', id=order.id) }}" class="text-dark">Детали</a></td>
       </tr>
