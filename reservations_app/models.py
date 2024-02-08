@@ -39,6 +39,14 @@ class Order(db.Model):
     def days_count(self):
         return (self.checkout_date - self.checkin_date).days
 
+    @property
+    def total_price(self):
+        accommodation_price = self.price * self.days_count * self.guests_count
+        services_price = sum(order_service.service.price * order_service.quantity
+                             for order_service in self.services)
+        total_price = accommodation_price + services_price
+        return total_price
+
     def __repr__(self):
         return (f'Бронирование {self.id}: {self.name}, '
                 f'{self.checkin_date}, ночей - {self.days_count}, '

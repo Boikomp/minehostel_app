@@ -16,8 +16,12 @@ class ServiceForm(FlaskForm):
     )
     price = IntegerField(
         'Стоимость одной услуги',
-        validators=[DataRequired(message='Обязательное поле'),
-                    NumberRange(min=0)]
+        validators=[
+            InputRequired('Обязательное поле'),
+            NumberRange(
+                min=0,
+                message='Введите неотрицательное число'
+            )]
     )
     submit = SubmitField('Добавить')
 
@@ -48,7 +52,12 @@ class OrderForm(FlaskForm):
     )
     price = IntegerField(
         'Стоимость одной ночи',
-        validators=[DataRequired(message='Обязательное поле')]
+        validators=[
+            InputRequired('Обязательное поле'),
+            NumberRange(
+                min=0,
+                message='Введите неотрицательное число'
+            )]
     )
     comment = TextAreaField('Комментарий')
     submit = SubmitField('Создать')
