@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Архив услуг{% endblock title %}
+
+{% block content %}
+
+<h1 class="mb-3">
+	{% block main_text %}Список неактивных услуг{% endblock main_text %}
+</h1>
+{% with messages = get_flashed_messages(category_filter=["service-success, service-error"]) %}
+	{% if messages %}
+	  {% for message in messages %}
+		  <p style="color: green">
+		    {{ message }}
+		  </p>
+	  {% endfor %}
+	{% endif %}
+{% endwith %}
+
+{% if services %}
+  <table class="table table-striped table-sm">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Название</th>
+        <th scope="col">Стоимость</th>
+        <th scope="col"></th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for service in services %}
+      <tr>
+        <td>{{ service.id }}</td>
+        <td>{{ service.title }}</td>
+        <td>{{ service.price }}</td>
+        <td><a href="{{ url_for('service_restore', id=service.id) }}" class="text-dark">Восстановить</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p>Пока нет ни одной неактивной допуслуги</p>
+{% endif %}
+
+{% endblock content %}

@@ -26,7 +26,7 @@ def orders_all():
 def order_detail(id):
     order = Order.query.get_or_404(id)
     form = OrderServiceForm()
-    services = Service.query.all()
+    services = Service.query.filter_by(active=True).all()
     form.service.choices = [
         (str(service.id), f'{service.title} - {service.price} сом')
         for service in services
@@ -129,7 +129,7 @@ def service_create():
             db.session.add(service)
             db.session.commit()
             flash('Услуга успешно создана!', 'service-success')
-            return redirect(url_for('services_all'))
+            return redirect(url_for('services_list'))
         except IntegrityError:
             db.session.rollback()
             flash('Услуга с таким названием уже существует.',
@@ -138,10 +138,16 @@ def service_create():
     return render_template('service_create.html', form=form)
 
 
-@app.route('/services-all')
-def services_all():
-    services = Service.query.all()
-    return render_template('services_all.html', services=services)
+@app.route('/services-list')
+def services_list():
+    services = Service.query.filter_by(active=True).all()
+    return render_template('services_list.html', services=services)
+
+
+@app.route('/services-archive')
+def services_archive():
+    services = Service.query.filter_by(active=False).all()
+    return render_template('services_archive.html', services=services)
 
 
 @app.route('/service-update/<int:id>', methods=['GET', 'POST'])
@@ -154,7 +160,7 @@ def service_update(id):
             form.populate_obj(service)
             db.session.commit()
             flash('Услуга успешно обновлена!', 'service-success')
-            return redirect(url_for('services_all'))
+            return redirect(url_for('services_list'))
         except IntegrityError:
             db.session.rollback()
             flash('Услуга с таким названием уже существует.', 'service-error')
@@ -167,11 +173,26 @@ def service_delete(id):
     service = Service.query.get_or_404(id)
 
     try:
-        db.session.delete(service)
+        service.active = False
         db.session.commit()
         flash('Услуга успешно удалена!', 'service-success')
+        return redirect(url_for('services_archive'))
     except Exception as e:
         db.session.rollback()
         flash(f'Ошибка удаления: {str(e)}', 'order-error')
+        return redirect(url_for('services_list'))
 
-    return redirect(url_for('services_all'))
+
+@app.route('/service-restore/<int:id>')
+def service_restore(id):
+    service = Service.query.get_or_404(id)
+
+    try:
+        service.active = True
+        db.session.commit()
+        flash('Услуга успешно восстановлена!', 'service-success')
+        return redirect(url_for('services_list'))
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Ошибка восстановления: {str(e)}', 'order-error')
+        return redirect(url_for('services_archive'))

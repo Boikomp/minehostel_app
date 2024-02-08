@@ -51,6 +51,7 @@ class Service(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), unique=True, nullable=False)
     price = db.Column(db.Integer, nullable=False)
+    active = db.Column(db.Boolean, default=True)
 
     orders = db.relationship('OrderService', back_populates='service',
                              cascade='all, delete-orphan', lazy='dynamic')
