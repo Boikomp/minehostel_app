@@ -38,7 +38,22 @@ class OrderForm(FlaskForm):
     )
     guests_count = IntegerField(
         'Количество гостей',
-        validators=[DataRequired(message='Обязательное поле')]
+        validators=[
+            InputRequired(message='Обязательное поле'),
+            NumberRange(
+                min=0,
+                message='Введите неотрицательное число'
+            )]
+    )
+    guides_count = IntegerField(
+        'Количество гидов',
+        validators=[
+            InputRequired(message='Обязательное поле'),
+            NumberRange(
+                min=0,
+                message='Введите неотрицательное число'
+            )
+            ]
     )
     checkin_date = DateField(
         'Дата заезда (ГГГГ-ММ-ДД)',
@@ -57,7 +72,8 @@ class OrderForm(FlaskForm):
             NumberRange(
                 min=0,
                 message='Введите неотрицательное число'
-            )]
+            )
+            ]
     )
     comment = TextAreaField('Комментарий')
     submit = SubmitField('Создать')

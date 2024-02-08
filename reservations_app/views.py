@@ -77,15 +77,16 @@ def order_create():
     form = OrderForm()
 
     if form.validate_on_submit():
-        order = Order(
-            name=form.name.data,
-            guests_count=form.guests_count.data,
-            checkin_date=form.checkin_date.data,
-            checkout_date=form.checkout_date.data,
-            price=form.price.data,
-            comment=form.comment.data,
-        )
         try:
+            order = Order(
+                name=form.name.data,
+                guests_count=form.guests_count.data,
+                guides_count=form.guides_count.data,
+                checkin_date=form.checkin_date.data,
+                checkout_date=form.checkout_date.data,
+                price=form.price.data,
+                comment=form.comment.data,
+            )
             db.session.add(order)
             db.session.commit()
             flash('Заказ успешно создан!', 'order-success')
@@ -94,6 +95,9 @@ def order_create():
             db.session.rollback()
             flash('Заказ с таким именем и датами уже существует.',
                   'order-error')
+        except ValueError as e:
+            db.session.rollback()
+            flash(str(e), 'order-error')
 
     return render_template('order_create.html', form=form)
 
@@ -121,11 +125,11 @@ def service_create():
     form = ServiceForm()
 
     if form.validate_on_submit():
-        service = Service(
-            title=form.title.data,
-            price=form.price.data,
-        )
         try:
+            service = Service(
+                title=form.title.data,
+                price=form.price.data,
+            )
             db.session.add(service)
             db.session.commit()
             flash('Услуга успешно создана!', 'service-success')
@@ -179,7 +183,7 @@ def service_delete(id):
         return redirect(url_for('services_archive'))
     except Exception as e:
         db.session.rollback()
-        flash(f'Ошибка удаления: {str(e)}', 'order-error')
+        flash(f'Ошибка удаления: {str(e)}', 'service-error')
         return redirect(url_for('services_list'))
 
 
@@ -194,5 +198,5 @@ def service_restore(id):
         return redirect(url_for('services_list'))
     except Exception as e:
         db.session.rollback()
-        flash(f'Ошибка восстановления: {str(e)}', 'order-error')
+        flash(f'Ошибка восстановления: {str(e)}', 'service-error')
         return redirect(url_for('services_archive'))

@@ -1,6 +1,8 @@
 from datetime import datetime
 from enum import StrEnum
 
+from sqlalchemy.orm import validates
+
 from . import db
 
 
@@ -20,6 +22,7 @@ class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     guests_count = db.Column(db.Integer, nullable=False)
+    guides_count = db.Column(db.Integer)
     checkin_date = db.Column(db.Date, index=True, nullable=False)
     checkout_date = db.Column(db.Date, index=True, nullable=False)
     price = db.Column(db.Integer, nullable=False)
@@ -42,10 +45,24 @@ class Order(db.Model):
     @property
     def total_price(self):
         accommodation_price = self.price * self.days_count * self.guests_count
-        services_price = sum(order_service.service.price * order_service.quantity
-                             for order_service in self.services)
+        services_price = sum(
+            order_service.service.price * order_service.quantity
+            for order_service in self.services
+        )
         total_price = accommodation_price + services_price
         return total_price
+
+    @validates('price', 'guests_count', 'guides_count')
+    def validate_non_negative(self, key, value):
+        if value < 0:
+            raise ValueError(f'{key} должно быть неотрицательным')
+        return value
+
+    @validates('checkout_date')
+    def validate_checkout_date(self, key, value):
+        if value < self.checkin_date:
+            raise ValueError("Дата выезда не может быть раньше даты заезда")
+        return value
 
     def __repr__(self):
         return (f'Бронирование {self.id}: {self.name}, '
@@ -61,8 +78,15 @@ class Service(db.Model):
     price = db.Column(db.Integer, nullable=False)
     active = db.Column(db.Boolean, default=True)
 
-    orders = db.relationship('OrderService', back_populates='service',
-                             cascade='all, delete-orphan', lazy='dynamic')
+    orders = db.relationship('OrderService',
+                             back_populates='service',
+                             lazy='dynamic')
+
+    @validates('price')
+    def validate_price(self, key, price):
+        if price < 0:
+            raise ValueError("Стоимость должна быть неотрицательной")
+        return price
 
     def __repr__(self):
         return (f'Услуга {self.title} - {self.price} сом')
@@ -70,6 +94,10 @@ class Service(db.Model):
 
 class OrderService(db.Model):
     __tablename__ = 'order_services'
+    __table_args__ = (
+        db.UniqueConstraint('order_id', 'service_id',
+                            name='unique_orderservice_constraint'),
+    )
 
     id = db.Column(db.Integer, primary_key=True)
     order_id = db.Column(db.Integer,
