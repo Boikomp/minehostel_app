@@ -44,7 +44,7 @@
         <li class="text-break">Комментарий: {{ order.comment }}</li>
       {% endif %}
       <li>Статус: {{ order.status }}</li>
-      <li>Полная стоимость: {{ order.total_price }}</li>
+      <li><b>Полная стоимость: {{ order.total_price }}</b></li>
     </ul>
     <a href="{{ url_for('order_update', id=order.id) }}" class="btn btn-lg btn-primary">Редактировать</a>
   </div>
