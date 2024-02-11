@@ -26,7 +26,7 @@ def orders_all():
 def order_detail(id):
     order = Order.query.get_or_404(id)
     form = OrderServiceForm()
-    services = Service.query.filter_by(active=True).all()
+    services = Service.query.filter_by(active=True).order_by('title').all()
     form.service.choices = [
         (str(service.id), f'{service.title} - {service.price} сом')
         for service in services
