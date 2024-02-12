@@ -2,3 +2,17 @@
 
 {% block title %}Все бронирования{% endblock title %}
 {% block main_text %}Список всех бронирований{% endblock main_text %}
+
+{% block paginator %}
+  {% if orders.has_prev %}
+    <a href="{{ url_for('orders_all', page=orders.prev_num) }}" class="btn btn-outline-primary">&laquo; Предыдущая</a>
+  {% else %}
+    <span class="btn btn-outline-secondary disabled">&laquo; Предыдущая</span>
+  {% endif %}
+
+  {% if orders.has_next %}
+    <a href="{{ url_for('orders_all', page=orders.next_num) }}" class="btn btn-outline-primary">Следующая &raquo;</a>
+  {% else %}
+    <span class="btn btn-outline-secondary disabled">Следующая &raquo;</span>
+  {% endif %}
+{% endblock paginator %}

@@ -1,4 +1,6 @@
 from flask import flash, redirect, render_template, request, url_for
+from flask_paginate import get_page_parameter
+from sqlalchemy import desc
 from sqlalchemy.exc import IntegrityError
 
 from . import app, db
@@ -9,16 +11,20 @@ from .models import Order, OrderService, Service, StatusEnum
 
 @app.route('/')
 def index():
+    page = request.args.get(get_page_parameter(), type=int, default=1)
+    per_page = 10
     orders = (Order.query
               .filter_by(status=StatusEnum.CREATED)
               .order_by(Order.checkin_date)
-              .all())
+              .paginate(page, per_page, error_out=False))
     return render_template('index.html', orders=orders)
 
 
 @app.route('/orders-all')
 def orders_all():
-    orders = Order.query.order_by(Order.checkin_date).all()
+    page = request.args.get(get_page_parameter(), type=int, default=1)
+    per_page = 10
+    orders = Order.query.order_by(desc(Order.checkin_date)).paginate(page, per_page, error_out=False)
     return render_template('orders_all.html', orders=orders)
 
 
@@ -144,13 +150,17 @@ def service_create():
 
 @app.route('/services-list')
 def services_list():
-    services = Service.query.filter_by(active=True).all()
+    page = request.args.get(get_page_parameter(), type=int, default=1)
+    per_page = 10
+    services = Service.query.filter_by(active=True).paginate(page, per_page, error_out=False)
     return render_template('services_list.html', services=services)
 
 
 @app.route('/services-archive')
 def services_archive():
-    services = Service.query.filter_by(active=False).all()
+    page = request.args.get(get_page_parameter(), type=int, default=1)
+    per_page = 10
+    services = Service.query.filter_by(active=False).paginate(page, per_page, error_out=False)
     return render_template('services_archive.html', services=services)
 
 

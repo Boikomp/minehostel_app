@@ -4,9 +4,7 @@
 
 {% block content %}
 
-<h1 class="mb-3">
-	{% block main_text %}Список неактивных услуг{% endblock main_text %}
-</h1>
+<h1 class="mb-3">Список неактивных услуг</h1>
 {% with messages = get_flashed_messages(category_filter=["service-success"]) %}
 	{% if messages %}
 	  {% for message in messages %}
@@ -26,7 +24,7 @@
 	{% endif %}
 {% endwith %}
 
-{% if services %}
+{% if services.items %}
   <table class="table table-striped table-sm">
     <thead>
       <tr>
@@ -38,7 +36,7 @@
       </tr>
     </thead>
     <tbody>
-      {% for service in services %}
+      {% for service in services.items %}
       <tr>
         <td>{{ service.id }}</td>
         <td>{{ service.title }}</td>
@@ -48,6 +46,19 @@
       {% endfor %}
     </tbody>
   </table>
+
+  {% if services.has_prev %}
+    <a href="{{ url_for('services_archive', page=services.prev_num) }}" class="btn btn-outline-primary">&laquo; Предыдущая</a>
+  {% else %}
+    <span class="btn btn-outline-secondary disabled">&laquo; Предыдущая</span>
+  {% endif %}
+
+  {% if services.has_next %}
+    <a href="{{ url_for('services_archive', page=services.next_num) }}" class="btn btn-outline-primary">Следующая &raquo;</a>
+  {% else %}
+    <span class="btn btn-outline-secondary disabled">Следующая &raquo;</span>
+  {% endif %}
+
 {% else %}
   <p>Пока нет ни одной неактивной допуслуги</p>
 {% endif %}
