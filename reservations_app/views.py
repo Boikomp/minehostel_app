@@ -154,6 +154,7 @@ def services_list():
     page = request.args.get(get_page_parameter(), type=int, default=1)
     services = (Service.query
                 .filter_by(active=True)
+                .order_by('title')
                 .paginate(page, ITEMS_PER_PAGE, error_out=False))
     return render_template('services_list.html', services=services)
 
