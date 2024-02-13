@@ -6,7 +6,10 @@
 
 <div class="d-flex justify-content-between align-items-center mb-3">
   <h1>Список всех услуг</h1>
-  <a href="{{ url_for('service_create') }}" class="btn btn-primary">Добавить услугу</a>
+  <div>
+    <a href="{{ url_for('service_create') }}" class="btn btn-primary">Добавить услугу</a>
+    <a href="{{ url_for('services_archive') }}" class="btn btn-outline-primary">Архив услуг</a>
+  </div>
 </div>
 
 {% with messages = get_flashed_messages(category_filter=["service-success"]) %}
