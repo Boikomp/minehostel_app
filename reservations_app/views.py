@@ -24,7 +24,7 @@ def index():
 def orders_all():
     page = request.args.get(get_page_parameter(), type=int, default=1)
     orders = (Order.query
-              .order_by(desc(Order.checkin_date))
+              .order_by(desc(Order.checkout_date))
               .paginate(page, ITEMS_PER_PAGE, error_out=False))
     return render_template('orders_all.html', orders=orders)
 
