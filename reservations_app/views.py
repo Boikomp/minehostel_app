@@ -4,6 +4,7 @@ from sqlalchemy import desc
 from sqlalchemy.exc import IntegrityError
 
 from . import app, db
+from .constants import ITEMS_PER_PAGE
 from .forms import (OrderForm, OrderServiceForm, OrderUpdateForm, ServiceForm,
                     ServiceUpdateForm)
 from .models import Order, OrderService, Service, StatusEnum
@@ -12,19 +13,19 @@ from .models import Order, OrderService, Service, StatusEnum
 @app.route('/')
 def index():
     page = request.args.get(get_page_parameter(), type=int, default=1)
-    per_page = 10
     orders = (Order.query
               .filter_by(status=StatusEnum.CREATED)
               .order_by(Order.checkin_date)
-              .paginate(page, per_page, error_out=False))
+              .paginate(page, ITEMS_PER_PAGE, error_out=False))
     return render_template('index.html', orders=orders)
 
 
 @app.route('/orders-all')
 def orders_all():
     page = request.args.get(get_page_parameter(), type=int, default=1)
-    per_page = 10
-    orders = Order.query.order_by(desc(Order.checkin_date)).paginate(page, per_page, error_out=False)
+    orders = (Order.query
+              .order_by(desc(Order.checkin_date))
+              .paginate(page, ITEMS_PER_PAGE, error_out=False))
     return render_template('orders_all.html', orders=orders)
 
 
@@ -151,16 +152,18 @@ def service_create():
 @app.route('/services-list')
 def services_list():
     page = request.args.get(get_page_parameter(), type=int, default=1)
-    per_page = 10
-    services = Service.query.filter_by(active=True).paginate(page, per_page, error_out=False)
+    services = (Service.query
+                .filter_by(active=True)
+                .paginate(page, ITEMS_PER_PAGE, error_out=False))
     return render_template('services_list.html', services=services)
 
 
 @app.route('/services-archive')
 def services_archive():
     page = request.args.get(get_page_parameter(), type=int, default=1)
-    per_page = 10
-    services = Service.query.filter_by(active=False).paginate(page, per_page, error_out=False)
+    services = (Service.query
+                .filter_by(active=False)
+                .paginate(page, ITEMS_PER_PAGE, error_out=False))
     return render_template('services_archive.html', services=services)
 
 
