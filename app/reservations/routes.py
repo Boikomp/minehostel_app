@@ -1,10 +1,10 @@
 from flask import flash, redirect, render_template, request, url_for
-from flask_login import login_required
+from flask_login import current_user, login_required
 from flask_paginate import get_page_parameter
 from sqlalchemy import desc
 from sqlalchemy.exc import IntegrityError
 
-from .. import db
+from .. import db, logger
 from . import reservations_bp
 from .constants import ITEMS_PER_PAGE
 from .forms import (OrderForm, OrderServiceForm, OrderUpdateForm, ServiceForm,
@@ -57,10 +57,19 @@ def order_detail(id):
                 if order_service:
                     if quantity == 0:
                         db.session.delete(order_service)
+                        logger.info(
+                            f'Юзер {current_user.email} удалил из заказа '
+                            f'{id=} услугу {service_id=}'
+                        )
                         flash('Дополнительная услуга успешно удалена',
                               'order-success')
                     else:
                         order_service.quantity = quantity
+                        logger.info(
+                            f'Юзер {current_user.email} обновил в заказе '
+                            f'{id=} количество услуги {service_id=} - '
+                            f'{quantity} шт'
+                        )
                         flash('Дополнительная услуга успешно обновлена',
                               'order-success')
                 else:
@@ -70,6 +79,10 @@ def order_detail(id):
                         quantity=quantity,
                     )
                     db.session.add(order_service)
+                    logger.info(
+                        f'Юзер {current_user.email} добавил к заказу {id=} '
+                        f'услугу {service_id=} в количестве {quantity} шт'
+                    )
                     flash('Дополнительная услуга успешно добавлена',
                           'order-success')
 
@@ -78,7 +91,9 @@ def order_detail(id):
                 return redirect(url_for('reservations.order_detail', id=id))
             except Exception as e:
                 db.session.rollback()
-                flash(f'Ошибка обновления: {str(e)}', 'order-error')
+                logger.error(f'Ошибка при обновлении заказа:\n'
+                             f'{str(e)}')
+                flash('Ошибка при обновлении заказа', 'order-error')
 
     return render_template('reservations/order_detail.html',
                            order=order, form=form)
@@ -102,15 +117,21 @@ def order_create():
             )
             db.session.add(order)
             db.session.commit()
+            logger.info(f'Юзер {current_user.email} создал заказ с данными:\n'
+                        f'{form.data}')
             flash('Заказ успешно создан!', 'order-success')
             return redirect(url_for('reservations.order_detail', id=order.id))
-        except IntegrityError:
+        except IntegrityError as e:
             db.session.rollback()
+            logger.error(f'Ошибка IntegrityError при создании заказа:\n'
+                         f'{str(e)}')
             flash('Заказ с таким именем и датами уже существует.',
                   'order-error')
-        except ValueError as e:
+        except Exception as e:
             db.session.rollback()
-            flash(str(e), 'order-error')
+            logger.error(f'Ошибка при создании заказа:\n'
+                         f'{str(e)}')
+            flash('Ошибка при создании заказа', 'order-error')
 
     return render_template('reservations/order_create.html', form=form)
 
@@ -125,11 +146,15 @@ def order_update(id):
         try:
             form.populate_obj(order)
             db.session.commit()
+            logger.info(f'Юзер {current_user.email} обновил заказ {id=} '
+                        f'данными:\n{form.data}')
             flash('Заказ успешно обновлен!', 'order-success')
             return redirect(url_for('reservations.order_detail', id=order.id))
         except Exception as e:
             db.session.rollback()
-            flash(f'Ошибка обновления: {str(e)}', 'order-error')
+            logger.error(f'Ошибка при обновлении заказа:\n'
+                         f'{str(e)}')
+            flash('Ошибка при обновлении заказа', 'order-error')
 
     return render_template('reservations/order_update.html',
                            form=form, order_id=id)
@@ -148,11 +173,15 @@ def service_create():
             )
             db.session.add(service)
             db.session.commit()
+            logger.info(f'Юзер {current_user.email} создал услугу с данными:\n'
+                        f'{form.data}')
             flash('Услуга успешно создана!', 'service-success')
             return redirect(url_for('reservations.services_list'))
-        except IntegrityError:
+        except IntegrityError as e:
             db.session.rollback()
-            flash('Услуга с таким названием уже существует.',
+            logger.error(f'Ошибка при создании услуги:\n'
+                         f'{str(e)}')
+            flash('Услуга с таким названием уже существует',
                   'service-error')
 
     return render_template('reservations/service_create.html', form=form)
@@ -191,11 +220,16 @@ def service_update(id):
         try:
             form.populate_obj(service)
             db.session.commit()
+            logger.info(f'Юзер {current_user.email} обновил услугу {id=} '
+                        f'данными:\n{form.data}')
             flash('Услуга успешно обновлена!', 'service-success')
             return redirect(url_for('reservations.services_list'))
-        except IntegrityError:
+        except IntegrityError as e:
             db.session.rollback()
-            flash('Услуга с таким названием уже существует.', 'service-error')
+            logger.error(f'Ошибка при обновлении услуги:\n'
+                         f'{str(e)}')
+            flash('Услуга с таким названием уже существует',
+                  'service-error')
 
     return render_template('reservations/service_update.html',
                            form=form, service_id=id)
@@ -209,11 +243,14 @@ def service_delete(id):
     try:
         service.active = False
         db.session.commit()
+        logger.info(f'Юзер {current_user.email} удалил услугу {id=}')
         flash('Услуга успешно удалена!', 'service-success')
         return redirect(url_for('reservations.services_archive'))
     except Exception as e:
         db.session.rollback()
-        flash(f'Ошибка удаления: {str(e)}', 'service-error')
+        logger.error(f'Ошибка при удалении услуги {id=}:\n'
+                     f'{str(e)}')
+        flash('Ошибка при удалении услуги', 'service-error')
         return redirect(url_for('reservations.services_list'))
 
 
@@ -225,9 +262,12 @@ def service_restore(id):
     try:
         service.active = True
         db.session.commit()
+        logger.info(f'Юзер {current_user.email} восстановил услугу {id=}')
         flash('Услуга успешно восстановлена!', 'service-success')
         return redirect(url_for('reservations.services_list'))
     except Exception as e:
         db.session.rollback()
-        flash(f'Ошибка восстановления: {str(e)}', 'service-error')
+        logger.error(f'Ошибка при восстановлении услуги {id=}:\n'
+                     f'{str(e)}')
+        flash('Ошибка восстановления', 'service-error')
         return redirect(url_for('reservations.services_archive'))
