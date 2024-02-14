@@ -6,7 +6,7 @@
 
 <div class="d-flex justify-content-between align-items-center mb-3">
   <h1>{% block main_text %}Предстоящие бронирования{% endblock main_text %}</h1>
-  <a href="{{ url_for('order_create') }}" class="btn btn-primary">Добавить бронирование</a>
+  <a href="{{ url_for('reservations.order_create') }}" class="btn btn-primary">Добавить бронирование</a>
 </div>
 
 {% if orders.items %}
@@ -35,7 +35,7 @@
         <td>{{ order.guests_count }}</td>
         <td>{{ order.comment[:40] }}...</td>
         <td>{{ order.status.value }}</td>
-        <td><a href="{{ url_for('order_detail', id=order.id) }}" class="text-dark">Детали</a></td>
+        <td><a href="{{ url_for('reservations.order_detail', id=order.id) }}" class="text-dark">Детали</a></td>
       </tr>
       {% endfor %}
     </tbody>
@@ -43,13 +43,13 @@
 
   {% block paginator %}
     {% if orders.has_prev %}
-      <a href="{{ url_for('index', page=orders.prev_num) }}" class="btn btn-outline-primary">&laquo; Предыдущая</a>
+      <a href="{{ url_for('reservations.index', page=orders.prev_num) }}" class="btn btn-outline-primary">&laquo; Предыдущая</a>
     {% else %}
       <span class="btn btn-outline-secondary disabled">&laquo; Предыдущая</span>
     {% endif %}
 
     {% if orders.has_next %}
-      <a href="{{ url_for('index', page=orders.next_num) }}" class="btn btn-outline-primary">Следующая &raquo;</a>
+      <a href="{{ url_for('reservations.index', page=orders.next_num) }}" class="btn btn-outline-primary">Следующая &raquo;</a>
     {% else %}
       <span class="btn btn-outline-secondary disabled">Следующая &raquo;</span>
     {% endif %}

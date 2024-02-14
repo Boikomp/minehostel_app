@@ -7,8 +7,8 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
   <h1>Список всех услуг</h1>
   <div>
-    <a href="{{ url_for('service_create') }}" class="btn btn-primary">Добавить услугу</a>
-    <a href="{{ url_for('services_archive') }}" class="btn btn-outline-primary">Архив услуг</a>
+    <a href="{{ url_for('reservations.service_create') }}" class="btn btn-primary">Добавить услугу</a>
+    <a href="{{ url_for('reservations.services_archive') }}" class="btn btn-outline-primary">Архив услуг</a>
   </div>
 </div>
 
@@ -48,21 +48,21 @@
         <td>{{ service.id }}</td>
         <td>{{ service.title }}</td>
         <td>{{ service.price }}</td>
-        <td><a href="{{ url_for('service_update', id=service.id) }}" class="text-dark">Редактировать</a></td>
-        <td><a href="{{ url_for('service_delete', id=service.id) }}" class="text-dark">Удалить</a></td>
+        <td><a href="{{ url_for('reservations.service_update', id=service.id) }}" class="text-dark">Редактировать</a></td>
+        <td><a href="{{ url_for('reservations.service_delete', id=service.id) }}" class="text-dark">Удалить</a></td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
 
   {% if services.has_prev %}
-    <a href="{{ url_for('services_list', page=services.prev_num) }}" class="btn btn-outline-primary">&laquo; Предыдущая</a>
+    <a href="{{ url_for('reservations.services_list', page=services.prev_num) }}" class="btn btn-outline-primary">&laquo; Предыдущая</a>
   {% else %}
     <span class="btn btn-outline-secondary disabled">&laquo; Предыдущая</span>
   {% endif %}
 
   {% if services.has_next %}
-    <a href="{{ url_for('services_list', page=services.next_num) }}" class="btn btn-outline-primary">Следующая &raquo;</a>
+    <a href="{{ url_for('reservations.services_list', page=services.next_num) }}" class="btn btn-outline-primary">Следующая &raquo;</a>
   {% else %}
     <span class="btn btn-outline-secondary disabled">Следующая &raquo;</span>
   {% endif %}

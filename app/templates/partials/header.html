@@ -1,12 +1,12 @@
 <div class="d-flex flex-column flex-md-row align-items-center pb-3 mb-3 border-bottom">
-  <a href="{{  url_for('index') }}" class="d-flex align-items-center link-body-emphasis text-decoration-none">
+  <a href="{{  url_for('reservations.index') }}" class="d-flex align-items-center link-body-emphasis text-decoration-none">
     <img src="{{ url_for('static', filename='img/Icon01.png') }}" alt="Логотип" class="me-2" width="52" height="52">
     <span class="fs-4">Mine Hostel Jyrgalan</span>
   </a>
 
   <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto">
-    <a class="me-3 py-2 link-body-emphasis text-decoration-none" href="{{ url_for('index') }}">Главная</a>
-    <a class="me-3 py-2 link-body-emphasis text-decoration-none" href="{{ url_for('orders_all') }}">Все бронирования</a>
-    <a class="me-3 py-2 link-body-emphasis text-decoration-none" href="{{ url_for('services_list') }}">Услуги</a>
+    <a class="me-3 py-2 link-body-emphasis text-decoration-none" href="{{ url_for('reservations.index') }}">Главная</a>
+    <a class="me-3 py-2 link-body-emphasis text-decoration-none" href="{{ url_for('reservations.orders_all') }}">Все бронирования</a>
+    <a class="me-3 py-2 link-body-emphasis text-decoration-none" href="{{ url_for('reservations.services_list') }}">Услуги</a>
   </nav>
 </div>

@@ -46,7 +46,7 @@
       <li>Статус: {{ order.status }}</li>
       <li><b>Полная стоимость: {{ order.total_price }}</b></li>
     </ul>
-    <a href="{{ url_for('order_update', id=order.id) }}" class="btn btn-lg btn-primary">Редактировать</a>
+    <a href="{{ url_for('reservations.order_update', id=order.id) }}" class="btn btn-lg btn-primary">Редактировать</a>
   </div>
 
   <div class="col-md-6">
