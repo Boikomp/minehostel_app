@@ -4,6 +4,12 @@ from wtforms.validators import DataRequired
 
 
 class LoginForm(FlaskForm):
-    email = StringField('Электронная почта', validators=[DataRequired()])
-    password = PasswordField('Пароль', validators=[DataRequired()])
+    email = StringField(
+        'Электронная почта',
+        validators=[DataRequired(message='Обязательное поле')]
+    )
+    password = PasswordField(
+        'Пароль',
+        validators=[DataRequired(message='Обязательное поле')]
+    )
     submit = SubmitField('Войти')
