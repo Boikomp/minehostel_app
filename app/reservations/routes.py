@@ -91,7 +91,7 @@ def order_detail(id):
                 return redirect(url_for('reservations.order_detail', id=id))
             except Exception as e:
                 db.session.rollback()
-                logger.error(f'Ошибка при обновлении заказа:\n'
+                logger.error(f'Ошибка при обновлении заказа {id=}:\n'
                              f'{str(e)}')
                 flash('Ошибка при обновлении заказа', 'order-error')
 
@@ -152,7 +152,7 @@ def order_update(id):
             return redirect(url_for('reservations.order_detail', id=order.id))
         except Exception as e:
             db.session.rollback()
-            logger.error(f'Ошибка при обновлении заказа:\n'
+            logger.error(f'Ошибка при обновлении заказа {id=}:\n'
                          f'{str(e)}')
             flash('Ошибка при обновлении заказа', 'order-error')
 
@@ -226,7 +226,7 @@ def service_update(id):
             return redirect(url_for('reservations.services_list'))
         except IntegrityError as e:
             db.session.rollback()
-            logger.error(f'Ошибка при обновлении услуги:\n'
+            logger.error(f'Ошибка при обновлении услуги {id=}:\n'
                          f'{str(e)}')
             flash('Услуга с таким названием уже существует',
                   'service-error')
