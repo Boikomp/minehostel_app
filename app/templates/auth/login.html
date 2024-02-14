@@ -1,0 +1,42 @@
+{% extends 'partials/base.html' %}
+
+{% block title %}Вход{% endblock title %}
+
+{% block content %}
+
+<h1 class="mb-3">Авторизация</h1>
+
+{% with messages = get_flashed_messages(category_filter=["auth-error"]) %}
+  {% if messages %}
+    {% for message in messages %}
+      <p style="color: red">
+        {{ message }}
+      </p>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<div class="col-12 col-lg-7">
+  <form method="POST" novalidate>
+    {{ form.csrf_token }}
+    {{ form.email(class="form-control form-control-lg", placeholder=form.email.label.text) }}
+    <p>
+      {% if form.email.errors %}
+        {% for error in form.email.errors %}
+          <span style="color: red">{{ error }}</span>
+        {% endfor %}
+      {% endif %}
+    </p>
+    {{ form.password(class="form-control form-control-lg", placeholder=form.password.label.text) }}
+    <p>
+      {% if form.password.errors %}
+        {% for error in form.password.errors %}
+          <span style="color: red">{{ error }}</span>
+        {% endfor %}
+      {% endif %}
+    </p>
+    {{ form.submit(class="btn btn-lg btn-primary") }}
+  </form>
+</div>
+
+{% endblock content %}

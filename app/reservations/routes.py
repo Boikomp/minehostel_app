@@ -1,4 +1,5 @@
 from flask import flash, redirect, render_template, request, url_for
+from flask_login import login_required
 from flask_paginate import get_page_parameter
 from sqlalchemy import desc
 from sqlalchemy.exc import IntegrityError
@@ -22,6 +23,7 @@ def index():
 
 
 @reservations_bp.route('/orders-all')
+@login_required
 def orders_all():
     page = request.args.get(get_page_parameter(), type=int, default=1)
     orders = (Order.query
@@ -31,6 +33,7 @@ def orders_all():
 
 
 @reservations_bp.route('/order/<int:id>', methods=['GET', 'POST'])
+@login_required
 def order_detail(id):
     order = Order.query.get_or_404(id)
     form = OrderServiceForm()
@@ -82,6 +85,7 @@ def order_detail(id):
 
 
 @reservations_bp.route('/order-create', methods=['GET', 'POST'])
+@login_required
 def order_create():
     form = OrderForm()
 
@@ -112,6 +116,7 @@ def order_create():
 
 
 @reservations_bp.route('/order-update/<int:id>/', methods=['GET', 'POST'])
+@login_required
 def order_update(id):
     order = Order.query.get_or_404(id)
     form = OrderUpdateForm(obj=order)
@@ -131,6 +136,7 @@ def order_update(id):
 
 
 @reservations_bp.route('/service-create', methods=['GET', 'POST'])
+@login_required
 def service_create():
     form = ServiceForm()
 
@@ -153,6 +159,7 @@ def service_create():
 
 
 @reservations_bp.route('/services-list')
+@login_required
 def services_list():
     page = request.args.get(get_page_parameter(), type=int, default=1)
     services = (Service.query
@@ -164,6 +171,7 @@ def services_list():
 
 
 @reservations_bp.route('/services-archive')
+@login_required
 def services_archive():
     page = request.args.get(get_page_parameter(), type=int, default=1)
     services = (Service.query
@@ -174,6 +182,7 @@ def services_archive():
 
 
 @reservations_bp.route('/service-update/<int:id>', methods=['GET', 'POST'])
+@login_required
 def service_update(id):
     service = Service.query.get_or_404(id)
     form = ServiceUpdateForm(obj=service)
@@ -193,6 +202,7 @@ def service_update(id):
 
 
 @reservations_bp.route('/service-delete/<int:id>')
+@login_required
 def service_delete(id):
     service = Service.query.get_or_404(id)
 
@@ -208,6 +218,7 @@ def service_delete(id):
 
 
 @reservations_bp.route('/service-restore/<int:id>')
+@login_required
 def service_restore(id):
     service = Service.query.get_or_404(id)
 

@@ -1,3 +1,5 @@
+from werkzeug.security import generate_password_hash
+
 from .. import app, db
 from .models import User
 
@@ -13,7 +15,8 @@ def create_user():
         print("Пользователь с таким email уже существует")
         return
 
-    new_user = User(email=email, password=password)
+    new_user = User(email=email,
+                    password_hash=generate_password_hash(password))
     db.session.add(new_user)
     db.session.commit()
     print("Пользователь успешно создан")
