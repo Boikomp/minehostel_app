@@ -3,7 +3,7 @@ from flask_paginate import get_page_parameter
 from sqlalchemy import desc
 from sqlalchemy.exc import IntegrityError
 
-from . import app, db
+from .. import app, db
 from .constants import ITEMS_PER_PAGE
 from .forms import (OrderForm, OrderServiceForm, OrderUpdateForm, ServiceForm,
                     ServiceUpdateForm)

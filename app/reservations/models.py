@@ -3,7 +3,7 @@ from enum import StrEnum
 
 from sqlalchemy.orm import validates
 
-from . import db
+from .. import db
 
 
 class StatusEnum(StrEnum):
