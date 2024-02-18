@@ -1,0 +1,84 @@
+{% extends 'partials/base.html' %}
+
+{% block title %}Касса{% endblock title %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1>{% block main_text %}Основная касса{% endblock main_text %}</h1>
+  <a href="{{ url_for('cash.transaction_create') }}" class="btn btn-primary">Добавить транзакцию</a>
+</div>
+
+{% with messages = get_flashed_messages(category_filter=["cash-success"]) %}
+  {% if messages %}
+    {% for message in messages %}
+      <p style="color: green">
+        {{ message }}
+      </p>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+{% with messages = get_flashed_messages(category_filter=["cash-error"]) %}
+  {% if messages %}
+    {% for message in messages %}
+      <p style="color: red">
+        {{ message }}
+      </p>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<p><b>Остаток в кассе: {{ cash_balance }}</b></p>
+
+{% if transactions.items %}
+  <table class="table table-striped table-sm">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Дата</th>
+        <th scope="col">Приход</th>
+        <th scope="col">Расход</th>
+        <th scope="col">Тип транзакции</th>
+        <th scope="col">Тип кассы</th>
+        <th scope="col">Коментарий</th>
+        <th scope="col"></th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for transaction in transactions.items %}
+      <tr>
+        <td>{{ transaction.id }}</td>
+        <td>{{ transaction.date }}</td>
+        <td>{{ transaction.debit }}</td>
+        <td>{{ transaction.credit }}</td>
+        <td>{{ transaction.type }}</td>
+        <td>{{ transaction.cash_type }}</td>
+        <td>{{ transaction.comment }}...</td>
+        <td><a href="{{ url_for('cash.transaction_update', id=transaction.id) }}" class="text-dark">Редактировать</a></td>
+        <td><a href="{{ url_for('cash.transaction_delete', id=transaction.id) }}" class="text-dark">Удалить</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {% block paginator %}
+    {% if transactions.has_prev %}
+      <a href="{{ url_for('cash.transactions_list', page=transactions.prev_num) }}" class="btn btn-outline-primary">&laquo; Предыдущая</a>
+    {% else %}
+      <span class="btn btn-outline-secondary disabled">&laquo; Предыдущая</span>
+    {% endif %}
+
+    {% if transactions.has_next %}
+      <a href="{{ url_for('cash.transactions_list', page=transactions.next_num) }}" class="btn btn-outline-primary">Следующая &raquo;</a>
+    {% else %}
+      <span class="btn btn-outline-secondary disabled">Следующая &raquo;</span>
+    {% endif %}
+  {% endblock paginator %}
+
+{% else %}
+  <p>Пока нет ни одной транзакции</p>
+{% endif %}
+
+{% endblock content %}

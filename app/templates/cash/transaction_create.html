@@ -1,0 +1,70 @@
+{% extends 'partials/base.html' %}
+
+{% block title %}Создание транзакции{% endblock title %}
+
+{% block content %}
+
+<h1 class="mb-3">
+  {% block main_text %}Создать новую транзакцию{% endblock main_text %}
+</h1>
+
+{% with messages = get_flashed_messages(category_filter=["cash-error"]) %}
+  {% if messages %}
+    {% for message in messages %}
+      <p style="color: red">
+        {{ message }}
+      </p>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<div class="col-12 col-lg-7">
+  <form method="POST" novalidate>
+    {{ form.csrf_token }}
+    {{ form.date(class="form-control form-control-lg", placeholder=form.date.label.text) }}
+    <p>
+      {% if form.date.errors %}
+        {% for error in form.date.errors %}
+          <span style="color: red">{{ error }}</span>
+        {% endfor %}
+      {% endif %}
+    </p>
+    {{ form.debit(class="form-control form-control-lg", placeholder=form.debit.label.text) }}
+    <p>
+      {% if form.debit.errors %}
+        {% for error in form.debit.errors %}
+          <span style="color: red">{{ error }}</span>
+        {% endfor %}
+      {% endif %}
+    </p>
+    {{ form.credit(class="form-control form-control-lg", placeholder=form.credit.label.text) }}
+    <p>
+      {% if form.credit.errors %}
+        {% for error in form.credit.errors %}
+          <span style="color: red">{{ error }}</span>
+        {% endfor %}
+      {% endif %}
+    </p>
+    {{ form.type(class="form-control form-control-lg", placeholder=form.type.label.text) }}
+    <p>
+      {% if form.type.errors %}
+        {% for error in form.type.errors %}
+          <span style="color: red">{{ error }}</span>
+        {% endfor %}
+      {% endif %}
+    </p>
+    {{ form.cash_type(class="form-control form-control-lg", placeholder=form.cash_type.label.text) }}
+    <p>
+      {% if form.cash_type.errors %}
+        {% for error in form.cash_type.errors %}
+          <span style="color: red">{{ error }}</span>
+        {% endfor %}
+      {% endif %}
+    </p>
+     {{ form.comment(class="form-control form-control-lg", placeholder=form.comment.label.text, rows="3", cols="40") }}
+    <p></p>
+    {{ form.submit(class="btn btn-lg btn-primary") }}
+  </form>
+</div>
+
+{% endblock content %}

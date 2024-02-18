@@ -8,6 +8,7 @@
     <a class="me-3 py-2 link-body-emphasis text-decoration-none" href="{{ url_for('reservations.index') }}">Главная</a>
     <a class="me-3 py-2 link-body-emphasis text-decoration-none" href="{{ url_for('reservations.orders_all') }}">Все бронирования</a>
     <a class="me-3 py-2 link-body-emphasis text-decoration-none" href="{{ url_for('reservations.services_list') }}">Услуги</a>
+    <a class="me-3 py-2 link-body-emphasis text-decoration-none" href="{{ url_for('cash.transactions_list') }}">Касса</a>
     {% if current_user.is_authenticated %}
       <a class="me-3 py-2 link-body-emphasis text-decoration-none" href="{{ url_for('auth.logout') }}">Выйти</a>
     {% endif %}

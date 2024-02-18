@@ -30,6 +30,7 @@ logger.addHandler(file_handler)
 
 from .auth import auth_bp
 from .auth.models import User
+from .cash import cash_bp
 from .reservations import reservations_bp
 
 
@@ -39,4 +40,5 @@ def load_user(user_id):
 
 
 app.register_blueprint(auth_bp, url_prefix='/auth')
+app.register_blueprint(cash_bp, url_prefix='/cash')
 app.register_blueprint(reservations_bp, url_prefix='')

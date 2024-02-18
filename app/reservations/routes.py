@@ -6,10 +6,10 @@ from sqlalchemy.exc import IntegrityError
 
 from .. import db, logger
 from . import reservations_bp
-from .constants import ITEMS_PER_PAGE
 from .forms import (OrderForm, OrderServiceForm, OrderUpdateForm, ServiceForm,
                     ServiceUpdateForm)
 from .models import Order, OrderService, Service, StatusEnum
+from constants import ITEMS_PER_PAGE
 
 
 @reservations_bp.route('/')
@@ -136,7 +136,7 @@ def order_create():
     return render_template('reservations/order_create.html', form=form)
 
 
-@reservations_bp.route('/order-update/<int:id>/', methods=['GET', 'POST'])
+@reservations_bp.route('/order-update/<int:id>', methods=['GET', 'POST'])
 @login_required
 def order_update(id):
     order = Order.query.get_or_404(id)
