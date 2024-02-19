@@ -73,7 +73,7 @@ class OrderForm(FlaskForm):
                 min=0,
                 message='Введите неотрицательное число'
             )
-            ]
+        ]
     )
     comment = TextAreaField('Комментарий')
     submit = SubmitField('Создать')

@@ -28,6 +28,7 @@ file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
 
+from . import error_handlers
 from .auth import auth_bp
 from .auth.models import User
 from .cash import cash_bp

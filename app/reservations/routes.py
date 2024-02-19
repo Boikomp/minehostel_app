@@ -5,11 +5,11 @@ from sqlalchemy import desc
 from sqlalchemy.exc import IntegrityError
 
 from .. import db, logger
+from ..constants import ITEMS_PER_PAGE
 from . import reservations_bp
 from .forms import (OrderForm, OrderServiceForm, OrderUpdateForm, ServiceForm,
                     ServiceUpdateForm)
 from .models import Order, OrderService, Service, StatusEnum
-from constants import ITEMS_PER_PAGE
 
 
 @reservations_bp.route('/')
