@@ -61,7 +61,7 @@ class Order(db.Model):
     @validates('checkout_date')
     def validate_checkout_date(self, key, value):
         if value < self.checkin_date:
-            raise ValueError("Дата выезда не может быть раньше даты заезда")
+            raise ValueError('Дата выезда не может быть раньше даты заезда')
         return value
 
     def __repr__(self):
@@ -85,7 +85,7 @@ class Service(db.Model):
     @validates('price')
     def validate_price(self, key, price):
         if price < 0:
-            raise ValueError("Стоимость должна быть неотрицательной")
+            raise ValueError('Стоимость должна быть неотрицательной')
         return price
 
     def __repr__(self):
