@@ -1,16 +1,16 @@
 from flask import flash, redirect, render_template, request, url_for
-from flask_login import current_user
-# from flask_login import login_required
+from flask_login import current_user, login_required
 from flask_paginate import get_page_parameter
 from sqlalchemy import desc
 
 from .. import db, logger
+from ..constants import ITEMS_PER_PAGE
 from . import cash_bp
 from .forms import TransactionForm
-from .models import Transaction, CashType
-from constants import ITEMS_PER_PAGE
+from .models import CashType, Transaction
 
 
+@login_required
 @cash_bp.route('/transactions-list')
 def transactions_list():
     page = request.args.get(get_page_parameter(), type=int, default=1)
@@ -23,6 +23,7 @@ def transactions_list():
                            cash_balance=cash_balance)
 
 
+@login_required
 @cash_bp.route('/transaction-create', methods=['GET', 'POST'])
 def transaction_create():
     form = TransactionForm()
@@ -43,7 +44,7 @@ def transaction_create():
                         f'с данными:\n{form.data}')
             flash('Транзакция успешно создана!', 'cash-success')
             return redirect(url_for('cash.transactions_list'))
-        except Exception as e:
+        except ValueError as e:
             db.session.rollback()
             logger.error(f'Ошибка при создании транзакции:\n'
                          f'{str(e)}')
@@ -52,6 +53,7 @@ def transaction_create():
     return render_template('cash/transaction_create.html', form=form)
 
 
+@login_required
 @cash_bp.route('/transaction-update/<int:id>', methods=['GET', 'POST'])
 def transaction_update(id):
     transaction = Transaction.query.get_or_404(id)
@@ -65,16 +67,17 @@ def transaction_update(id):
                         f'данными:\n{form.data}')
             flash('Транзакция успешно обновлена!', 'cash-success')
             return redirect(url_for('cash.transactions_list', id=id))
-        except Exception as e:
+        except ValueError as e:
             db.session.rollback()
             logger.error(f'Ошибка при обновлении транзакции {id=}:\n'
                          f'{str(e)}')
-            flash('Ошибка при обновлении транзакции', 'order-error')
+            flash(f'Ошибка при обновлении транзакции: {str(e)}', 'cash-error')
 
     return render_template('cash/transaction_update.html',
                            form=form, transaction_id=id)
 
 
+@login_required
 @cash_bp.route('/transaction-delete/<int:id>')
 def transaction_delete(id):
     transaction = Transaction.query.get_or_404(id)

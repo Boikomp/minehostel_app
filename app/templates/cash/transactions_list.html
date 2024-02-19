@@ -51,8 +51,20 @@
       <tr>
         <td>{{ transaction.id }}</td>
         <td>{{ transaction.date }}</td>
-        <td>{{ transaction.debit }}</td>
-        <td>{{ transaction.credit }}</td>
+        <td>
+          {% if transaction.debit %}
+            {{ transaction.debit }}
+          {% else %}
+            ...
+          {% endif %}
+        </td>
+        <td>
+          {% if transaction.credit %}
+            {{ transaction.credit }}
+          {% else %}
+            ...
+          {% endif %}
+        </td>
         <td>{{ transaction.type }}</td>
         <td>{{ transaction.cash_type }}</td>
         <td>{{ transaction.comment }}...</td>

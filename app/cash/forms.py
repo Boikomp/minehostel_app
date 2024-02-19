@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import (DateField, IntegerField, SelectField, StringField,
-                     SubmitField, TextAreaField)
-from wtforms.validators import DataRequired, InputRequired, Length, NumberRange, Optional
+from wtforms import (DateField, IntegerField, SelectField, SubmitField,
+                     TextAreaField)
+from wtforms.validators import DataRequired, NumberRange, Optional
 
 from .models import CashType, TransactionType
 
@@ -15,8 +15,26 @@ class TransactionForm(FlaskForm):
         format='%Y-%m-%d',
         validators=[DataRequired(message='Обязательное поле')]
     )
-    debit = IntegerField('Приход', validators=[Optional()])
-    credit = IntegerField('Расход', validators=[Optional()])
+    debit = IntegerField(
+        'Приход',
+        validators=[
+            Optional(),
+            NumberRange(
+                min=1,
+                message='Введите положительное число'
+            )
+        ]
+    )
+    credit = IntegerField(
+        'Расход',
+        validators=[
+            Optional(),
+            NumberRange(
+                min=1,
+                message='Введите положительное число'
+            )
+        ]
+    )
     type = SelectField(
         'Тип транзакции', choices=TYPE_CHOICES,
         validators=[DataRequired(message='Обязательное поле')]
@@ -27,3 +45,26 @@ class TransactionForm(FlaskForm):
     )
     comment = TextAreaField('Комментарий')
     submit = SubmitField('Сохранить')
+
+    def validate(self):
+        if not super().validate():
+            return False
+
+        if self.debit.data is None and self.credit.data is None:
+            self.debit.errors.append(
+                'Поле "Приход" или "Расход" должно быть заполнено'
+            )
+            self.credit.errors.append(
+                'Поле "Приход" или "Расход" должно быть заполнено'
+            )
+            return False
+        elif self.debit.data is not None and self.credit.data is not None:
+            self.debit.errors.append(
+                'Заполните только одно из полей "Приход" или "Расход"'
+            )
+            self.credit.errors.append(
+                'Заполните только одно из полей "Приход" или "Расход"'
+            )
+            return False
+
+        return True
