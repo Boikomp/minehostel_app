@@ -10,8 +10,8 @@ from .forms import TransactionForm
 from .models import CashType, Transaction
 
 
-@login_required
 @cash_bp.route('/transactions-list')
+@login_required
 def transactions_list():
     page = request.args.get(get_page_parameter(), type=int, default=1)
     transactions = (Transaction.query
@@ -23,8 +23,8 @@ def transactions_list():
                            cash_balance=cash_balance)
 
 
-@login_required
 @cash_bp.route('/transaction-create', methods=['GET', 'POST'])
+@login_required
 def transaction_create():
     form = TransactionForm()
 
@@ -53,8 +53,8 @@ def transaction_create():
     return render_template('cash/transaction_create.html', form=form)
 
 
-@login_required
 @cash_bp.route('/transaction-update/<int:id>', methods=['GET', 'POST'])
+@login_required
 def transaction_update(id):
     transaction = Transaction.query.get_or_404(id)
     form = TransactionForm(obj=transaction)
@@ -66,7 +66,7 @@ def transaction_update(id):
             logger.info(f'Юзер {current_user.email} обновил транзакцию {id=} '
                         f'данными:\n{form.data}')
             flash('Транзакция успешно обновлена!', 'cash-success')
-            return redirect(url_for('cash.transactions_list', id=id))
+            return redirect(url_for('cash.transactions_list'))
         except ValueError as e:
             db.session.rollback()
             logger.error(f'Ошибка при обновлении транзакции {id=}:\n'
@@ -77,8 +77,8 @@ def transaction_update(id):
                            form=form, transaction_id=id)
 
 
-@login_required
 @cash_bp.route('/transaction-delete/<int:id>')
+@login_required
 def transaction_delete(id):
     transaction = Transaction.query.get_or_404(id)
 
