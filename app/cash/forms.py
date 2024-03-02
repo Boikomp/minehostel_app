@@ -3,10 +3,9 @@ from wtforms import (DateField, IntegerField, SelectField, SubmitField,
                      TextAreaField)
 from wtforms.validators import DataRequired, NumberRange, Optional
 
-from .models import CashType, TransactionType
+from .models import TransactionType
 
 TYPE_CHOICES = [(type.name, type.value) for type in TransactionType]
-CASH_CHOICES = [(type.name, type.value) for type in CashType]
 
 
 class TransactionForm(FlaskForm):
@@ -37,10 +36,6 @@ class TransactionForm(FlaskForm):
     )
     type = SelectField(
         'Тип транзакции', choices=TYPE_CHOICES,
-        validators=[DataRequired(message='Обязательное поле')]
-    )
-    cash_type = SelectField(
-        'Тип кассы', choices=CASH_CHOICES,
         validators=[DataRequired(message='Обязательное поле')]
     )
     comment = TextAreaField('Комментарий')

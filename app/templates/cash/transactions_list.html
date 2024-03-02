@@ -40,7 +40,6 @@
         <th scope="col">Приход</th>
         <th scope="col">Расход</th>
         <th scope="col">Тип транзакции</th>
-        <th scope="col">Тип кассы</th>
         <th scope="col">Коментарий</th>
         <th scope="col"></th>
         <th scope="col"></th>
@@ -66,7 +65,6 @@
           {% endif %}
         </td>
         <td>{{ transaction.type }}</td>
-        <td>{{ transaction.cash_type }}</td>
         <td>{{ transaction.comment }}...</td>
         <td><a href="{{ url_for('cash.transaction_update', id=transaction.id) }}" class="text-dark">Редактировать</a></td>
         <td><a href="{{ url_for('cash.transaction_delete', id=transaction.id) }}" class="text-dark">Удалить</a></td>

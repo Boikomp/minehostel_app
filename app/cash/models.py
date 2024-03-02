@@ -15,11 +15,6 @@ class TransactionType(StrEnum):
     ELSE = 'Другое'
 
 
-class CashType(StrEnum):
-    MAIN_CASH = 'Основная касса'
-    BAR_CASH = 'Барная касса'
-
-
 class Transaction(db.Model):
     __tablename__ = 'transactions'
 
@@ -28,12 +23,11 @@ class Transaction(db.Model):
     debit = db.Column(db.Integer)
     credit = db.Column(db.Integer)
     type = db.Column(db.Enum(TransactionType), nullable=False)
-    cash_type = db.Column(db.Enum(CashType), nullable=False)
     comment = db.Column(db.Text)
 
     @classmethod
-    def cash_balance(cls, cash_type):
-        transactions = cls.query.filter_by(cash_type=cash_type).all()
+    def cash_balance(cls):
+        transactions = cls.query.all()
         total_credit = sum(
             transaction.credit
             for transaction in transactions
@@ -53,9 +47,9 @@ class Transaction(db.Model):
         return value
 
     def __repr__(self):
-        amount = 'дебит' if self.credit != 0 else 'кредит'
+        amount = 'приход' if self.credit != 0 else 'расход'
         return (
             f'Транзакция {self.id} ({self.date}), '
             f'{amount}={self.debit or self.credit}, '
-            f'тип - {self.type}, тип кассы - {self.cash_type}'
+            f'тип - {self.type}'
         )

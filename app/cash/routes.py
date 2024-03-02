@@ -7,7 +7,7 @@ from .. import db, logger
 from ..constants import ITEMS_PER_PAGE
 from . import cash_bp
 from .forms import TransactionForm
-from .models import CashType, Transaction
+from .models import Transaction
 
 
 @cash_bp.route('/transactions-list')
@@ -17,7 +17,7 @@ def transactions_list():
     transactions = (Transaction.query
                     .order_by(desc(Transaction.date))
                     .paginate(page, ITEMS_PER_PAGE, error_out=False))
-    cash_balance = Transaction.cash_balance(CashType.MAIN_CASH)
+    cash_balance = Transaction.cash_balance()
     return render_template('cash/transactions_list.html',
                            transactions=transactions,
                            cash_balance=cash_balance)
@@ -35,7 +35,6 @@ def transaction_create():
                 debit=form.debit.data,
                 credit=form.credit.data,
                 type=form.type.data,
-                cash_type=form.cash_type.data,
                 comment=form.comment.data,
             )
             db.session.add(transaction)

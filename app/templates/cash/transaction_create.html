@@ -53,15 +53,7 @@
         {% endfor %}
       {% endif %}
     </p>
-    {{ form.cash_type(class="form-control form-control-lg", placeholder=form.cash_type.label.text) }}
-    <p>
-      {% if form.cash_type.errors %}
-        {% for error in form.cash_type.errors %}
-          <span style="color: red">{{ error }}</span>
-        {% endfor %}
-      {% endif %}
-    </p>
-     {{ form.comment(class="form-control form-control-lg", placeholder=form.comment.label.text, rows="3", cols="40") }}
+    {{ form.comment(class="form-control form-control-lg", placeholder=form.comment.label.text, rows="3", cols="40") }}
     <p></p>
     {{ form.submit(class="btn btn-lg btn-primary") }}
   </form>
