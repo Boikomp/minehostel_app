@@ -274,6 +274,7 @@ def service_restore(id):
 
 
 @reservations_bp.route('/admin-salary', methods=['GET', 'POST'])
+@login_required
 def admin_salary():
     form = SalaryDateForm()
 
