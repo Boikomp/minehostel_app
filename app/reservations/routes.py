@@ -7,8 +7,8 @@ from sqlalchemy.exc import IntegrityError
 from .. import db, logger
 from ..constants import ITEMS_PER_PAGE
 from . import reservations_bp
-from .forms import (OrderForm, OrderServiceForm, OrderUpdateForm, ServiceForm,
-                    ServiceUpdateForm)
+from .forms import (OrderForm, OrderServiceForm, OrderUpdateForm,
+                    SalaryDateForm, ServiceForm, ServiceUpdateForm)
 from .models import Order, OrderService, Service, StatusEnum
 
 
@@ -271,3 +271,23 @@ def service_restore(id):
                      f'{str(e)}')
         flash('Ошибка восстановления', 'service-error')
         return redirect(url_for('reservations.services_archive'))
+
+
+@reservations_bp.route('/admin-salary', methods=['GET', 'POST'])
+def admin_salary():
+    form = SalaryDateForm()
+
+    if form.validate_on_submit():
+        from_date = form.start_date.data
+        to_date = form.finish_date.data
+        orders = Order.query.filter(
+            Order.status != StatusEnum.CANCELED,
+            Order.checkin_date >= from_date,
+            Order.checkout_date <= to_date
+        ).all()
+        total_salary = sum(order.admin_procent for order in orders)
+        return render_template('reservations/salary.html', form=form,
+                               orders=orders, total_salary=total_salary,
+                               from_date=from_date, to_date=to_date)
+
+    return render_template('reservations/salary.html', form=form)

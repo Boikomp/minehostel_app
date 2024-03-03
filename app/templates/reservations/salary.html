@@ -1,0 +1,66 @@
+{% extends 'partials/base.html' %}
+
+{% block title %}Зарплата администратора{% endblock title %}
+
+{% block content %}
+
+<h1 class="mb-3">Отчет о зарплате администратора</h1>
+
+<div class="col-12 col-lg-7">
+  <form method="POST" novalidate>
+    {{ form.csrf_token }}
+    {{ form.start_date(class="form-control form-control-lg", placeholder=form.start_date.label.text) }}
+    <p>
+      {% if form.start_date.errors %}
+        {% for error in form.start_date.errors %}
+          <span style="color: red">{{ error }}</span>
+        {% endfor %}
+      {% endif %}
+    </p>
+    {{ form.finish_date(class="form-control form-control-lg", placeholder=form.finish_date.label.text) }}
+    <p>
+      {% if form.finish_date.errors %}
+        {% for error in form.finish_date.errors %}
+          <span style="color: red">{{ error }}</span>
+        {% endfor %}
+      {% endif %}
+    </p>
+    {{ form.submit(class="btn btn-lg btn-primary") }}
+  </form>
+</div>
+<br>
+
+{% if orders %}
+  <p><b>Премиальная часть с {{ from_date }} по {{ to_date }}: {{ total_salary }} сом</b></p>
+
+  <table class="table table-striped table-sm">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Имя гостя</th>
+        <th scope="col">Дата заезда</th>
+        <th scope="col">Дата выезда</th>
+        <th scope="col">Статус</th>
+        <th scope="col">Процент</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order in orders %}
+      <tr>
+        <td>{{ order.id }}</td>
+        <td>{{ order.name }}</td>
+        <td>{{ order.checkin_date }}</td>
+        <td>{{ order.checkout_date }}</td>
+        <td>{{ order.status }}</td>
+        <td>{{ order.admin_procent }} сом</td>
+        <td><a href="{{ url_for('reservations.order_detail', id=order.id) }}" class="text-dark">Подробнее</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% elif total_salary == 0 %}
+  <p><b>За период с {{ from_date }} по {{ to_date }} нет премии</b></p>
+{% endif %}
+
+{% endblock content %}

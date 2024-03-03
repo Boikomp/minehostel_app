@@ -4,6 +4,7 @@ from enum import StrEnum
 from sqlalchemy.orm import validates
 
 from .. import db
+from ..constants import ADMIN_PROCENT
 
 
 class StatusEnum(StrEnum):
@@ -51,6 +52,15 @@ class Order(db.Model):
         )
         total_price = accommodation_price + services_price
         return total_price
+
+    @property
+    def admin_procent(self):
+        beds_count = self.guests_count + (self.guides_count or 0)
+        order_salary = ADMIN_PROCENT * beds_count * self.days_count
+        for service in self.services:
+            if service.service_id in (4, 6):
+                order_salary += ADMIN_PROCENT * service.quantity
+        return order_salary
 
     @validates('price', 'guests_count', 'guides_count')
     def validate_non_negative(self, key, value):

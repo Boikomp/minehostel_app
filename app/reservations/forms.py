@@ -100,3 +100,27 @@ class OrderServiceForm(FlaskForm):
         ]
     )
     submit = SubmitField('Сохранить')
+
+
+class SalaryDateForm(FlaskForm):
+    start_date = DateField(
+        'Начальная дата (ГГГГ-ММ-ДД)',
+        format='%Y-%m-%d',
+        validators=[DataRequired(message='Обязательное поле')]
+    )
+    finish_date = DateField(
+        'Конечная дата (ГГГГ-ММ-ДД)',
+        format='%Y-%m-%d',
+        validators=[DataRequired(message='Обязательное поле')]
+    )
+    submit = SubmitField('Рассчитать')
+
+    def validate(self):
+        if not super().validate():
+            return False
+        if self.start_date.data >= self.finish_date.data:
+            self.start_date.errors.append(
+                'Начальная дата должна быть раньше конечной даты'
+            )
+            return False
+        return True
